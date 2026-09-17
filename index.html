@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>La Báscula: Laboratorio de Álgebra</title>
+  <style>
+    :root {
+      --bg: #070d1e;
+      --card-bg: rgba(22, 32, 58, 0.85);
+      --accent-l: #38bdf8;
+      --accent-r: #f472b6;
+      --gold: #facc15;
+      --gold-dark: #ca8a04;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0b1329 55%, #050814 100%);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 500px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, #38bdf8 0%, #facc15 60%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .screen-nav {
+      display: flex;
+      width: 100%;
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-nav {
+      flex: 1;
+      padding: 5px 2px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.74rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-nav.active {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: var(--gold);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.25);
+    }
+
+    .tutorial-guide-box {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid var(--gold);
+      border-radius: 10px;
+      padding: 6px 10px;
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.2);
+    }
+
+    .tut-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .tut-step-tag {
+      background: var(--gold);
+      color: #0f172a;
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .tut-instructions {
+      font-size: 0.78rem;
+      color: #f8fafc;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .tut-instructions strong { color: var(--gold); }
+
+    .tut-footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tut-hint {
+      font-size: 0.7rem;
+      color: var(--accent-l);
+      font-style: italic;
+    }
+
+    .btn-tut-action {
+      background: #334155;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tut-guide-highlight {
+      outline: 2px solid var(--gold) !important;
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.85) !important;
+      animation: pulseHighlight 1s infinite alternate !important;
+    }
+
+    @keyframes pulseHighlight {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+
+    .difficulty-bar {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 10px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .diff-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .diff-level-text {
+      font-weight: 800;
+      color: var(--gold);
+      font-size: 0.75rem;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .scale-wrapper {
+      position: relative;
+      width: 100%;
+      height: 145px;
+      margin: 0 auto;
+    }
+
+    svg#balanceSvg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    #beamGroup {
+      transform-origin: 300px 80px;
+      transition: transform 0.75s cubic-bezier(0.34, 1.35, 0.64, 1);
+    }
+
+    #leftPanGroup, #rightPanGroup {
+      transform-origin: center;
+      transition: transform 0.75s cubic-bezier(0.34, 1.35, 0.64, 1);
+    }
+
+    .pan-content {
+      font-size: 14px;
+      font-weight: 900;
+      fill: #ffffff;
+      text-anchor: middle;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
+    }
+
+    .equation-board {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      margin: 0 auto;
+    }
+
+    .eq-left { color: var(--accent-l); }
+    .eq-sign { color: var(--gold); font-size: 1.15rem; }
+    .eq-right { color: var(--accent-r); }
+
+    .status-badge {
+      font-weight: 800;
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin: 0 auto;
+    }
+    .balanced { background: rgba(6, 95, 70, 0.85); color: #34d399; border: 1px solid #10b981; }
+    .unbalanced { background: rgba(127, 29, 29, 0.85); color: #fca5a5; border: 1px solid #ef4444; }
+    .victory { background: rgba(133, 77, 14, 0.9); color: #fef08a; border: 1px solid var(--gold); }
+
+    .toast-msg {
+      background: rgba(127, 29, 29, 0.95);
+      color: #fecaca;
+      border: 1px solid #ef4444;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: none;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .paren-toolbox {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      border-radius: 8px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .paren-toolbox span {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .paren-dock {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip-paren {
+      background: linear-gradient(135deg, #78350f, #b45309) !important;
+      color: #fef08a !important;
+      border: 1.5px solid #facc15 !important;
+      font-size: 1.1rem !important;
+      padding: 2px 10px !important;
+      font-weight: 900 !important;
+      cursor: grab !important;
+      border-radius: 6px !important;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .pan-workbench {
+      background: var(--card-bg);
+      border: 1.5px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 6px;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pan-workbench.workbench-left { border-color: rgba(56, 189, 248, 0.45); }
+    .pan-workbench.workbench-right { border-color: rgba(244, 114, 182, 0.45); }
+
+    .workbench-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .workbench-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .workbench-left .workbench-title { color: var(--accent-l); }
+    .workbench-right .workbench-title { color: var(--accent-r); }
+
+    .terms-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .term-chip {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: grab;
+      border: 1.5px solid #38bdf8;
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    }
+
+    .term-chip.chip-y {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border-color: #38bdf8;
+    }
+
+    .term-chip.chip-fuse-target {
+      border-color: #fff !important;
+      box-shadow: 0 0 16px #facc15 !important;
+      transform: scale(1.12) !important;
+    }
+
+    .chip-compact {
+      background: linear-gradient(135deg, #4c1d95, #6d28d9) !important;
+      border-color: #c084fc !important;
+    }
+
+    .chip-op {
+      background: linear-gradient(135deg, #065f46, #059669) !important;
+      border-color: #34d399 !important;
+    }
+
+    .injector-card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .injector-card span {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .injector-controls {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .injector-controls select {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      outline: none;
+    }
+
+    .btn-open-injector {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      border: 1px solid #38bdf8;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
+
+    .controls-bottom {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 6px 4px;
+      background: rgba(30, 41, 59, 0.85);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.76rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: transparent;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 8px;
+    }
+
+    .modal-box {
+      background: linear-gradient(145deg, #16203a, #0b1329);
+      border: 2px solid var(--gold);
+      border-radius: 14px;
+      padding: 12px;
+      width: 100%;
+      max-width: 330px;
+      text-align: center;
+    }
+
+    .modal-title {
+      color: var(--gold);
+      font-size: 1rem;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .modal-desc {
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 8px;
+      background: #090e1c;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1.15rem;
+      text-align: center;
+      outline: none;
+      margin-bottom: 8px;
+      font-family: monospace;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .calc-keypad {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .calc-btn {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 2px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .calc-btn.var { background: #3b224c; color: #e879f9; }
+    .calc-btn.op { background: #0f2744; color: #38bdf8; }
+    .calc-btn.paren { background: #4a2800; color: #f59e0b; }
+    .calc-btn.clear { background: #450a0a; color: #f87171; }
+
+    .modal-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-modal-confirm {
+      flex: 1;
+      background: linear-gradient(135deg, #facc15, #ca8a04);
+      color: #0f172a;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    #splitOptionsModal .modal-box { border-color: #38bdf8; }
+    #splitOptionsModal .modal-title { color: #38bdf8; }
+
+    .split-choice-btn {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .split-choice-btn:hover { background: #0284c7; }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 20px;
+        justify-content: center;
+        overflow-y: auto;
+      }
+      .app-container { max-width: 850px; gap: 10px; justify-content: flex-start; }
+      h1 { font-size: 1.9rem; margin-bottom: 4px; }
+      .scale-wrapper { height: 210px; }
+      .equation-board { font-size: 1.35rem; padding: 6px 22px; }
+      .pan-workbench { min-height: 110px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>⚖️ La Báscula: Laboratorio de Álgebra</h1>
+    </header>
+
+    <div class="screen-nav">
+      <button class="btn-nav active" onclick="switchScreen('tutorial')">1. Tutorial</button>
+      <button class="btn-nav" onclick="switchScreen('practica')">2. Práctica</button>
+      <button class="btn-nav" onclick="switchScreen('creacion')">3. Creación</button>
+    </div>
+
+    <div class="tutorial-guide-box" id="tutGuideBox">
+      <div class="tut-header">
+        <span class="tut-step-tag" id="tutStepTag">Paso 1 de 5</span>
+        <button class="btn-tut-action" onclick="resetTutorialStep()">Reiniciar Tutorial</button>
+      </div>
+      <div class="tut-instructions" id="tutInstructions">
+        Arrastra <strong>+x</strong> sobre <strong>+3x</strong> para sumarlos.
+      </div>
+      <div class="tut-footer-bar">
+        <span class="tut-hint" id="tutHint">👉 Observa la ficha parpadeante</span>
+      </div>
+    </div>
+
+    <div class="difficulty-bar" id="diffBar" style="display:none;">
+      <span class="diff-label">Dificultad</span>
+      <input type="range" id="diffSlider" min="1" max="5" value="3" step="1" oninput="changeDifficulty()" />
+      <span class="diff-level-text" id="diffText">Nivel 3: Fórmulas Compactas</span>
+    </div>
+
+    <div class="scale-wrapper">
+      <svg id="balanceSvg" viewBox="0 0 600 350">
+        <defs>
+          <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fef08a"/>
+            <stop offset="35%" stop-color="#facc15"/>
+            <stop offset="70%" stop-color="#ca8a04"/>
+            <stop offset="100%" stop-color="#713f12"/>
+          </linearGradient>
+          <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.5"/>
+          </filter>
+        </defs>
+
+        <path d="M 230 330 L 370 330 L 335 290 L 265 290 Z" fill="url(#goldGrad)" filter="url(#dropShadow)"/>
+        <rect x="290" y="70" width="20" height="230" rx="8" fill="url(#goldGrad)" filter="url(#dropShadow)"/>
+        <circle cx="300" cy="80" r="16" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/>
+
+        <g id="beamGroup">
+          <rect x="70" y="74" width="460" height="12" rx="6" fill="url(#goldGrad)" filter="url(#dropShadow)"/>
+          <circle cx="90" cy="80" r="7" fill="#fef08a"/>
+          <circle cx="510" cy="80" r="7" fill="#fef08a"/>
+
+          <g id="leftPanGroup">
+            <line x1="90" y1="80" x2="45" y2="180" stroke="#ca8a04" stroke-width="2.5"/>
+            <line x1="90" y1="80" x2="135" y2="180" stroke="#ca8a04" stroke-width="2.5"/>
+            <path d="M 30 180 Q 90 220 150 180 Z" fill="url(#goldGrad)" filter="url(#dropShadow)"/>
+            <text id="leftPanText" x="90" y="165" class="pan-content">0</text>
+          </g>
+
+          <g id="rightPanGroup">
+            <line x1="510" y1="80" x2="465" y2="180" stroke="#ca8a04" stroke-width="2.5"/>
+            <line x1="510" y1="80" x2="555" y2="180" stroke="#ca8a04" stroke-width="2.5"/>
+            <path d="M 450 180 Q 510 220 570 180 Z" fill="url(#goldGrad)" filter="url(#dropShadow)"/>
+            <text id="rightPanText" x="510" y="165" class="pan-content">0</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="equation-board">
+      <span class="eq-left" id="eqLeftText">0</span>
+      <span class="eq-sign" id="eqSymbol">=</span>
+      <span class="eq-right" id="eqRightText">0</span>
+    </div>
+
+    <div id="statusBadge" class="status-badge balanced">⚖️ Balanza en equilibrio</div>
+    <div id="toastMsg" class="toast-msg">No son términos que puedan sumarse</div>
+
+    <div class="paren-toolbox">
+      <span>Arrastrar Paréntesis:</span>
+      <div class="paren-dock">
+        <div class="term-chip chip-paren" id="toolParenOpen" draggable="true" data-val="(">(</div>
+        <div class="term-chip chip-paren" id="toolParenClose" draggable="true" data-val=")">)</div>
+      </div>
+    </div>
+
+    <div class="workbench-grid">
+      <div class="pan-workbench workbench-left" id="zoneLeft" 
+           ondragover="handleZoneDragOver(event)" ondragleave="handleZoneDragLeave(event)" ondrop="handleZoneDrop(event, 'left')">
+        <div class="workbench-header">
+          <span class="workbench-title">Plato Izq</span>
+        </div>
+        <div class="terms-box" id="termsLeft"></div>
+      </div>
+
+      <div class="pan-workbench workbench-right" id="zoneRight" 
+           ondragover="handleZoneDragOver(event)" ondragleave="handleZoneDragLeave(event)" ondrop="handleZoneDrop(event, 'right')">
+        <div class="workbench-header">
+          <span class="workbench-title">Plato Der</span>
+        </div>
+        <div class="terms-box" id="termsRight"></div>
+      </div>
+    </div>
+
+    <div class="injector-card">
+      <span>Añadir término:</span>
+      <div class="injector-controls">
+        <select id="injectSide">
+          <option value="both">Ambos Platos (Ley Uniforme)</option>
+          <option value="left">Plato Izq</option>
+          <option value="right">Plato Der</option>
+        </select>
+        <button class="btn-open-injector" id="btnOpenInjector" onclick="openKeypadModal('inject')">+ Abrir Teclado</button>
+      </div>
+    </div>
+
+    <div class="controls-bottom">
+      <button class="btn-secondary" id="btnUndo" onclick="undoLastAction()" disabled title="Deshacer el último cambio">↩ Deshacer</button>
+      <button class="btn-secondary" id="btnNewProblem" onclick="handleNewProblemBtn()">🎲 Nueva</button>
+      <button class="btn-secondary" onclick="resetCurrent()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- Modal Teclado Numérico con X e Y -->
+  <div class="modal-backdrop" id="calcModal">
+    <div class="modal-box">
+      <div class="modal-title" id="calcModalTitle">Agregar a la Balanza</div>
+      <div class="modal-desc" id="calcModalDesc">Usa los botones para escribir la expresión:</div>
+      <input type="text" class="modal-input" id="calcInput" readonly inputmode="none" placeholder="0" />
+      
+      <div class="calc-keypad">
+        <button class="calc-btn var" onclick="pressModalKey('x')">x</button>
+        <button class="calc-btn var" onclick="pressModalKey('y')">y</button>
+        <button class="calc-btn paren" onclick="pressModalKey('(')">(</button>
+        <button class="calc-btn paren" onclick="pressModalKey(')')">)</button>
+        <button class="calc-btn clear" onclick="pressModalClear()">AC</button>
+
+        <button class="calc-btn" onclick="pressModalKey('7')">7</button>
+        <button class="calc-btn" onclick="pressModalKey('8')">8</button>
+        <button class="calc-btn" onclick="pressModalKey('9')">9</button>
+        <button class="calc-btn op" onclick="pressModalKey('/')">/</button>
+        <button class="calc-btn" onclick="pressModalBackspace()">⌫</button>
+
+        <button class="calc-btn" onclick="pressModalKey('4')">4</button>
+        <button class="calc-btn" onclick="pressModalKey('5')">5</button>
+        <button class="calc-btn" onclick="pressModalKey('6')">6</button>
+        <button class="calc-btn op" onclick="pressModalKey('*')">*</button>
+        <button class="calc-btn op" onclick="pressModalKey('-')">−</button>
+
+        <button class="calc-btn" onclick="pressModalKey('1')">1</button>
+        <button class="calc-btn" onclick="pressModalKey('2')">2</button>
+        <button class="calc-btn" onclick="pressModalKey('3')">3</button>
+        <button class="calc-btn op" onclick="pressModalKey('+')">+</button>
+        <button class="calc-btn op" onclick="pressModalKey('/2')">/2</button>
+
+        <button class="calc-btn" style="grid-column: span 2;" onclick="pressModalKey('0')">0</button>
+        <button class="calc-btn" onclick="pressModalKey('.')">.</button>
+        <button class="calc-btn op" onclick="pressModalKey('*2')">*2</button>
+        <button class="calc-btn op" onclick="pressModalKey('/4')">/4</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeKeypadModal()">Cancelar</button>
+        <button class="btn-modal-confirm" id="btnConfirmModal" onclick="confirmModalAction()">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="splitOptionsModal">
+    <div class="modal-box">
+      <div class="modal-title">¿Descomponer o Separar?</div>
+      <div class="modal-desc" id="splitOptionsDesc">Selecciona la operación equivalente que deseas aplicar:</div>
+      <div id="splitChoicesContainer" style="margin-bottom:12px;"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeSplitOptionsModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="parenDeleteModal">
+    <div class="modal-box">
+      <div class="modal-title">¿Eliminar Paréntesis?</div>
+      <div class="modal-desc" id="parenDeleteDesc">Este paréntesis no está agrupando una operación obligatoria. ¿Deseas eliminarlo?</div>
+      <div class="modal-actions" style="margin-top:14px;">
+        <button class="btn-modal-cancel" onclick="closeParenDeleteModal()">Conservar</button>
+        <button class="btn-modal-confirm" onclick="confirmDeleteParen()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+
+        if (type === 'fuse') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        } else if (type === 'tilt') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.23);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        } else if (type === 'victory') {
+          [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.setValueAtTime(freq, now + i * 0.09);
+            gain.gain.setValueAtTime(0.2, now + i * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.09 + 0.3);
+            o.start(now + i * 0.09);
+            o.stop(now + i * 0.09 + 0.31);
+          });
+        }
+      } catch(e) {}
+    }
+
+    let currentScreen = 'tutorial';
+    let currentVariable = 'x'; // 'x' o 'y'
+    let leftTerms = [];
+    let rightTerms = [];
+    let initialSnapshot = null;
+    let secretVarVal = 8;
+    let currentDifficulty = 3;
+    let prevTiltAngle = 0;
+    let hasPlayedVictory = false;
+    let tutorialStep = 1;
+
+    let historyStack = [];
+
+    function saveHistoryState() {
+      historyStack.push({
+        left: JSON.parse(JSON.stringify(leftTerms)),
+        right: JSON.parse(JSON.stringify(rightTerms)),
+        tutStep: tutorialStep
+      });
+      if (historyStack.length > 25) historyStack.shift();
+      updateUndoButton();
+    }
+
+    function updateUndoButton() {
+      const btn = document.getElementById('btnUndo');
+      if (btn) btn.disabled = historyStack.length === 0;
+    }
+
+    function undoLastAction() {
+      if (historyStack.length === 0) return;
+      const prev = historyStack.pop();
+      leftTerms = prev.left;
+      rightTerms = prev.right;
+      tutorialStep = prev.tutStep;
+      playSound('tilt');
+      updateUndoButton();
+      render();
+    }
+
+    function autoEncloseSideInParens(termsList) {
+      if (!termsList || termsList.length === 0) return;
+      const isWrapped = termsList[0].type === 'paren_char' && termsList[0].char === '(' &&
+                        termsList[termsList.length - 1].type === 'paren_char' && termsList[termsList.length - 1].char === ')';
+      
+      if (termsList.length === 1 && termsList[0].type !== 'compact') return;
+
+      if (!isWrapped) {
+        termsList.unshift({ type: 'paren_char', char: '(' });
+        termsList.push({ type: 'paren_char', char: ')' });
+      }
+    }
+
+    const tutGuideBox = document.getElementById('tutGuideBox');
+    const tutStepTag = document.getElementById('tutStepTag');
+    const tutInstructions = document.getElementById('tutInstructions');
+    const tutHint = document.getElementById('tutHint');
+
+    const diffNames = {
+      1: "Nivel 1: Muy Sencillo (var + a = b)",
+      2: "Nivel 2: Multiplicador Directo (a*var = b)",
+      3: "Nivel 3: Bloque Compacto [Ej: 2(x+3) o 2(y+3)]",
+      4: "Nivel 4: Fracciones y Bloques Múltiples",
+      5: "Nivel 5: Experto (Variables en ambos lados)"
+    };
+
+    const beamGroup = document.getElementById('beamGroup');
+    const leftPanGroup = document.getElementById('leftPanGroup');
+    const rightPanGroup = document.getElementById('rightPanGroup');
+    const leftPanText = document.getElementById('leftPanText');
+    const rightPanText = document.getElementById('rightPanText');
+    const eqLeftText = document.getElementById('eqLeftText');
+    const eqRightText = document.getElementById('eqRightText');
+    const eqSymbol = document.getElementById('eqSymbol');
+    const statusBadge = document.getElementById('statusBadge');
+    const toastMsg = document.getElementById('toastMsg');
+    const termsLeftEl = document.getElementById('termsLeft');
+    const termsRightEl = document.getElementById('termsRight');
+    const diffBar = document.getElementById('diffBar');
+
+    let modalMode = 'inject';
+    let termToSplit = null;
+    let parenToDelete = null;
+    let isDragging = false;
+    let touchDragData = null;
+    let touchGhostEl = null;
+
+    setupParenToolbox();
+
+    function setupParenToolbox() {
+      ['toolParenOpen', 'toolParenClose'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.ondragstart = (e) => {
+          isDragging = true;
+          e.stopPropagation();
+          e.dataTransfer.setData('application/json', JSON.stringify({
+            originSide: 'toolbox',
+            index: -1,
+            term: { type: 'paren_char', char: el.dataset.val }
+          }));
+        };
+
+        el.ondragend = () => { setTimeout(() => { isDragging = false; }, 120); };
+
+        el.ontouchstart = (e) => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          touchDragData = { originSide: 'toolbox', index: -1, term: { type: 'paren_char', char: el.dataset.val }, startX: touch.clientX, startY: touch.clientY, hasMoved: false };
+          
+          touchGhostEl = el.cloneNode(true);
+          touchGhostEl.style.position = 'fixed';
+          touchGhostEl.style.zIndex = '9999';
+          touchGhostEl.style.pointerEvents = 'none';
+          touchGhostEl.style.opacity = '0.9';
+          touchGhostEl.style.left = `${touch.clientX - 15}px`;
+          touchGhostEl.style.top = `${touch.clientY - 15}px`;
+          document.body.appendChild(touchGhostEl);
+        };
+
+        el.ontouchmove = (e) => {
+          e.preventDefault();
+          if (!touchDragData) return;
+          const touch = e.touches[0];
+          touchDragData.hasMoved = true;
+          isDragging = true;
+          if (touchGhostEl) {
+            touchGhostEl.style.left = `${touch.clientX - 15}px`;
+            touchGhostEl.style.top = `${touch.clientY - 15}px`;
+          }
+        };
+
+        el.ontouchend = (e) => {
+          if (!touchDragData) return;
+          if (touchGhostEl) { touchGhostEl.remove(); touchGhostEl = null; }
+
+          if (touchDragData.hasMoved) {
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (dropTarget) {
+              const targetWorkbench = dropTarget.closest('.pan-workbench');
+              if (targetWorkbench) {
+                const tSide = targetWorkbench.id === 'zoneLeft' ? 'left' : 'right';
+                saveHistoryState();
+                insertParenChar(tSide, touchDragData.term.char);
+              }
+            }
+          }
+          touchDragData = null;
+          setTimeout(() => { isDragging = false; }, 120);
+        };
+      });
+    }
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      historyStack = [];
+      updateUndoButton();
+
+      document.querySelectorAll('.btn-nav').forEach((b, i) => {
+        b.classList.toggle('active', 
+          (screen === 'tutorial' && i === 0) ||
+          (screen === 'practica' && i === 1) ||
+          (screen === 'creacion' && i === 2)
+        );
+      });
+
+      diffBar.style.display = screen === 'practica' ? 'flex' : 'none';
+      tutGuideBox.style.display = screen === 'tutorial' ? 'block' : 'none';
+
+      if (screen === 'creacion') {
+        document.getElementById('btnNewProblem').style.display = 'none';
+        leftTerms = [];
+        rightTerms = [];
+        render();
+      } else if (screen === 'tutorial') {
+        document.getElementById('btnNewProblem').style.display = 'none';
+        resetTutorialStep();
+      } else {
+        document.getElementById('btnNewProblem').style.display = 'block';
+        generateProblemByDifficulty();
+      }
+    }
+
+    function changeDifficulty() {
+      currentDifficulty = parseInt(document.getElementById('diffSlider').value);
+      document.getElementById('diffText').textContent = diffNames[currentDifficulty];
+      generateProblemByDifficulty();
+    }
+
+    function handleNewProblemBtn() {
+      if (currentScreen === 'tutorial') resetTutorialStep();
+      else generateProblemByDifficulty();
+    }
+
+    function showToast(msg) {
+      playSound('error');
+      toastMsg.textContent = msg;
+      toastMsg.style.display = 'block';
+      setTimeout(() => { toastMsg.style.display = 'none'; }, 2500);
+    }
+
+    function formatTermText(t, i) {
+      if (t.type === 'paren_char') return t.char;
+      if (t.type === 'num') {
+        let sign = t.val >= 0 ? (i > 0 ? '+ ' : '') : '- ';
+        let numStr = Number.isInteger(t.val) ? Math.abs(t.val) : (Math.round(Math.abs(t.val)*100)/100);
+        return `${sign}${numStr}`;
+      }
+      if (t.type === 'var') {
+        let v = t.v || 'x';
+        let sign = t.val > 0 ? (i > 0 ? '+ ' : '') : '- ';
+        let abs = Math.abs(t.val);
+        let c = abs === 1 ? '' : (Number.isInteger(abs) ? abs : Math.round(abs*100)/100);
+        return `${sign}${c}${v}`;
+      }
+      if (t.type === 'op') return `${t.op}${t.val}`;
+      if (t.type === 'compact') {
+        let v = t.innerVar || 'x';
+        let sign = t.mult < 0 ? '- ' : (i > 0 ? '+ ' : '');
+        let m = Math.abs(t.mult) === 1 ? '' : Math.abs(t.mult);
+        let inV = t.innerVal === 1 ? v : (t.innerVal === -1 ? `-${v}` : `${t.innerVal}${v}`);
+        let inNum = t.innerNum >= 0 ? `+ ${t.innerNum}` : `- ${Math.abs(t.innerNum)}`;
+        return `${sign}${m}(${inV} ${inNum})`;
+      }
+      return '';
+    }
+
+    function formatListToString(terms) {
+      if (!terms || terms.length === 0) return '0';
+      return terms.map((t, i) => {
+        let txt = formatTermText(t, i);
+        if (i > 0 && terms[i-1].type === 'paren_char' && terms[i-1].char === '(') {
+          txt = txt.replace(/^\+\s*/, '');
+        }
+        return txt;
+      }).join(' ');
+    }
+
+    function checkParenthesisBalance(terms) {
+      let openCount = 0;
+      for (let t of terms) {
+        if (t.type === 'paren_char') {
+          if (t.char === '(') openCount++;
+          if (t.char === ')') openCount--;
+          if (openCount < 0) return false;
+        }
+      }
+      return openCount === 0;
+    }
+
+    function evalSideExact(terms) {
+      if (!terms || terms.length === 0) return 0;
+      if (!checkParenthesisBalance(terms)) return NaN;
+
+      let currentSum = 0;
+      let parenSum = 0;
+      let inParen = false;
+      let opQueue = [];
+
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        if (t.type === 'paren_char') {
+          if (t.char === '(') {
+            inParen = true;
+            parenSum = 0;
+          } else if (t.char === ')') {
+            inParen = false;
+            currentSum += parenSum;
+          }
+        } else if (t.type === 'op') {
+          opQueue.push(t);
+        } else {
+          let val = 0;
+          if (t.type === 'num') val = t.val;
+          else if (t.type === 'var') val = t.val * secretVarVal;
+          else if (t.type === 'compact') val = t.mult * (t.innerVal * secretVarVal + t.innerNum);
+
+          if (inParen) parenSum += val;
+          else currentSum += val;
+        }
+      }
+
+      for (let op of opQueue) {
+        if (op.op === '/') currentSum /= op.val;
+        if (op.op === '*') currentSum *= op.val;
+      }
+
+      return currentSum;
+    }
+
+    function render() {
+      const leftStr = formatListToString(leftTerms);
+      const rightStr = formatListToString(rightTerms);
+
+      leftPanText.textContent = leftStr.length > 13 ? leftStr.slice(0, 11) + '…' : leftStr;
+      rightPanText.textContent = rightStr.length > 13 ? rightStr.slice(0, 11) + '…' : rightStr;
+      eqLeftText.textContent = leftStr;
+      eqRightText.textContent = rightStr;
+
+      const isLeftParenBalanced = checkParenthesisBalance(leftTerms);
+      const isRightParenBalanced = checkParenthesisBalance(rightTerms);
+
+      if (!isLeftParenBalanced || !isRightParenBalanced) {
+        statusBadge.className = 'status-badge unbalanced';
+        statusBadge.innerHTML = `⚠️ Paréntesis sin cerrar '(' y ')'`;
+        beamGroup.style.transform = `rotate(0deg)`;
+        renderChips(termsLeftEl, leftTerms, 'left');
+        renderChips(termsRightEl, rightTerms, 'right');
+        if (currentScreen === 'tutorial') updateTutorialGuide();
+        return;
+      }
+
+      const leftWeight = evalSideExact(leftTerms);
+      const rightWeight = evalSideExact(rightTerms);
+
+      if (isNaN(leftWeight) || isNaN(rightWeight)) {
+        statusBadge.className = 'status-badge unbalanced';
+        statusBadge.textContent = 'En construcción...';
+        renderChips(termsLeftEl, leftTerms, 'left');
+        renderChips(termsRightEl, rightTerms, 'right');
+        return;
+      }
+
+      const diff = rightWeight - leftWeight;
+      const isEquilibrada = Math.abs(diff) < 0.001;
+      
+      let angle = diff * 3.5;
+      if (angle > 18) angle = 18;
+      if (angle < -18) angle = -18;
+
+      if (Math.abs(angle - prevTiltAngle) > 2) {
+        playSound('tilt');
+        prevTiltAngle = angle;
+      }
+
+      beamGroup.style.transform = `rotate(${angle}deg)`;
+      leftPanGroup.style.transformOrigin = `90px 80px`;
+      leftPanGroup.style.transform = `rotate(${-angle}deg)`;
+      rightPanGroup.style.transformOrigin = `510px 80px`;
+      rightPanGroup.style.transform = `rotate(${-angle}deg)`;
+
+      const isVarIsolatedLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 1 &&
+                               rightTerms.every(t => t.type === 'num');
+      const isVarIsolatedRight = rightTerms.length === 1 && rightTerms[0].type === 'var' && rightTerms[0].val === 1 &&
+                                leftTerms.every(t => t.type === 'num');
+      const isVarIsolated = isVarIsolatedLeft || isVarIsolatedRight;
+
+      if (isVarIsolated && isEquilibrada) {
+        eqSymbol.textContent = '=';
+        statusBadge.className = 'status-badge victory';
+        statusBadge.innerHTML = `🎉 ¡Incógnita resuelta! <strong>${currentVariable} = ${secretVarVal}</strong>`;
+        if (!hasPlayedVictory) {
+          playSound('victory');
+          hasPlayedVictory = true;
+        }
+      } else if (isVarIsolated && !isEquilibrada) {
+        hasPlayedVictory = false;
+        eqSymbol.textContent = diff > 0 ? '<' : '>';
+        statusBadge.className = 'status-badge unbalanced';
+        let apparentVal = Math.round((isVarIsolatedLeft ? rightWeight : leftWeight) * 10) / 10;
+        statusBadge.innerHTML = `❌ Desequilibrada (${currentVariable} no puede ser ${apparentVal})`;
+      } else if (isEquilibrada) {
+        hasPlayedVictory = false;
+        eqSymbol.textContent = '=';
+        statusBadge.className = 'status-badge balanced';
+        statusBadge.textContent = '⚖️ Balanza en equilibrio';
+      } else {
+        hasPlayedVictory = false;
+        eqSymbol.textContent = diff > 0 ? '<' : '>';
+        statusBadge.className = 'status-badge unbalanced';
+        statusBadge.textContent = `⚠️ Balanza desequilibrada`;
+      }
+
+      renderChips(termsLeftEl, leftTerms, 'left');
+      renderChips(termsRightEl, rightTerms, 'right');
+
+      if (currentScreen === 'tutorial') updateTutorialGuide();
+    }
+
+    function renderChips(container, terms, side) {
+      container.innerHTML = '';
+      terms.forEach((t, idx) => {
+        const chip = document.createElement('div');
+        chip.className = 'term-chip';
+        chip.draggable = true;
+        chip.id = `chip_${side}_${idx}`;
+
+        if (t.type === 'paren_char') {
+          chip.classList.add('chip-paren');
+          chip.textContent = t.char;
+        } else if (t.type === 'var') {
+          const v = t.v || 'x';
+          if (v === 'y') chip.classList.add('chip-y');
+          const abs = Math.abs(t.val);
+          const c = abs === 1 ? '' : (Number.isInteger(abs) ? abs : Math.round(abs*100)/100);
+          chip.textContent = `${t.val > 0 ? '+' : '-'}${c}${v}`;
+        } else if (t.type === 'num') {
+          let numStr = Number.isInteger(t.val) ? Math.abs(t.val) : Math.round(Math.abs(t.val)*100)/100;
+          chip.textContent = t.val >= 0 ? `+${numStr}` : `-${numStr}`;
+        } else if (t.type === 'compact') {
+          chip.classList.add('chip-compact');
+          chip.textContent = formatTermText(t, 0);
+        } else if (t.type === 'op') {
+          chip.classList.add('chip-op');
+          chip.textContent = `${t.op}${t.val}`;
+        }
+
+        chip.ondragstart = (e) => {
+          isDragging = true;
+          e.stopPropagation();
+          e.dataTransfer.setData('application/json', JSON.stringify({ originSide: side, index: idx, term: t }));
+        };
+        chip.ondragend = () => { setTimeout(() => { isDragging = false; }, 120); };
+        chip.ondragover = (e) => { e.preventDefault(); e.stopPropagation(); chip.classList.add('chip-fuse-target'); };
+        chip.ondragleave = (e) => { e.stopPropagation(); chip.classList.remove('chip-fuse-target'); };
+        chip.ondrop = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          chip.classList.remove('chip-fuse-target');
+          const dataStr = e.dataTransfer.getData('application/json');
+          if (!dataStr) return;
+          handleChipFuse(JSON.parse(dataStr), side, idx);
+        };
+
+        chip.ontouchstart = (e) => {
+          e.preventDefault();
+          const touch = e.touches[0];
+          touchDragData = { originSide: side, index: idx, term: t, startX: touch.clientX, startY: touch.clientY, hasMoved: false };
+          touchGhostEl = chip.cloneNode(true);
+          touchGhostEl.style.position = 'fixed';
+          touchGhostEl.style.zIndex = '9999';
+          touchGhostEl.style.pointerEvents = 'none';
+          touchGhostEl.style.opacity = '0.85';
+          touchGhostEl.style.left = `${touch.clientX - 25}px`;
+          touchGhostEl.style.top = `${touch.clientY - 20}px`;
+          document.body.appendChild(touchGhostEl);
+        };
+
+        chip.ontouchmove = (e) => {
+          e.preventDefault();
+          if (!touchDragData) return;
+          const touch = e.touches[0];
+          touchDragData.hasMoved = true;
+          isDragging = true;
+          if (touchGhostEl) {
+            touchGhostEl.style.left = `${touch.clientX - 25}px`;
+            touchGhostEl.style.top = `${touch.clientY - 20}px`;
+          }
+        };
+
+        chip.ontouchend = (e) => {
+          if (!touchDragData) return;
+          if (touchGhostEl) { touchGhostEl.remove(); touchGhostEl = null; }
+
+          if (touchDragData.hasMoved) {
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (dropTarget) {
+              const targetChip = dropTarget.closest('.term-chip');
+              const targetWorkbench = dropTarget.closest('.pan-workbench');
+
+              if (targetChip && targetChip !== chip) {
+                const targetBox = targetChip.closest('.terms-box');
+                const tSide = targetBox.id === 'termsLeft' ? 'left' : 'right';
+                const chipsArr = Array.from(targetBox.children);
+                const tIdx = chipsArr.indexOf(targetChip);
+                if (tIdx !== -1) handleChipFuse(touchDragData, tSide, tIdx);
+              } else if (targetWorkbench) {
+                const tSide = targetWorkbench.id === 'zoneLeft' ? 'left' : 'right';
+                handleZoneDropMobile(touchDragData, tSide);
+              }
+            }
+          } else {
+            handleChipClick(side, idx, t);
+          }
+
+          touchDragData = null;
+          setTimeout(() => { isDragging = false; }, 120);
+        };
+
+        chip.onclick = (e) => {
+          if (isDragging) return;
+          handleChipClick(side, idx, t);
+        };
+
+        container.appendChild(chip);
+      });
+    }
+
+    function handleChipClick(side, idx, term) {
+      if (term.type === 'paren_char') {
+        openParenDeleteModal(side, idx, term);
+      } else if (term.type === 'compact') {
+        openSplitCompactModal(side, idx, term);
+      } else if (term.type === 'num') {
+        openSplitNumberModal(side, idx, term);
+      } else {
+        openKeypadModal('split', side, idx, term);
+      }
+    }
+
+    function openSplitCompactModal(side, idx, term) {
+      termToSplit = { side, idx, term };
+      const container = document.getElementById('splitChoicesContainer');
+      container.innerHTML = '';
+
+      const m = term.mult;
+      const inV = term.innerVal;
+      const inNum = term.innerNum;
+      const v = term.innerVar || 'x';
+
+      const distV = m * inV;
+      const distNum = m * inNum;
+      const btnDist = document.createElement('button');
+      btnDist.className = 'split-choice-btn';
+      btnDist.innerHTML = `<span>1. Propiedad Distributiva (Expandir):</span> <strong>${distV}${v} ${distNum >= 0 ? '+' : ''}${distNum}</strong>`;
+      btnDist.onclick = () => {
+        saveHistoryState();
+        executeSplitCompact([
+          { type: 'var', v: v, val: distV },
+          { type: 'num', val: distNum }
+        ]);
+      };
+      container.appendChild(btnDist);
+
+      const btnFactor = document.createElement('button');
+      btnFactor.className = 'split-choice-btn';
+      btnFactor.innerHTML = `<span>2. Desprender factor común:</span> <strong>${m} * (${inV}${v} ${inNum >= 0 ? '+' : ''}${inNum})</strong>`;
+      btnFactor.onclick = () => {
+        saveHistoryState();
+        executeSplitCompact([
+          { type: 'num', val: m },
+          { type: 'paren_char', char: '(' },
+          { type: 'var', v: v, val: inV },
+          { type: 'num', val: inNum },
+          { type: 'paren_char', char: ')' }
+        ]);
+      };
+      container.appendChild(btnFactor);
+
+      document.getElementById('splitOptionsModal').style.display = 'flex';
+    }
+
+    function openSplitNumberModal(side, idx, term) {
+      termToSplit = { side, idx, term };
+      const container = document.getElementById('splitChoicesContainer');
+      container.innerHTML = '';
+
+      const val = term.val;
+      const half = val / 2;
+
+      const btnHalf = document.createElement('button');
+      btnHalf.className = 'split-choice-btn';
+      btnHalf.innerHTML = `<span>Descomponer en partes iguales:</span> <strong>${half} + ${half}</strong>`;
+      btnHalf.onclick = () => {
+        saveHistoryState();
+        executeSplitCompact([
+          { type: 'num', val: half },
+          { type: 'num', val: half }
+        ]);
+      };
+      container.appendChild(btnHalf);
+
+      const btnCustom = document.createElement('button');
+      btnCustom.className = 'split-choice-btn';
+      btnCustom.innerHTML = `<span>Personalizar división con teclado...</span> <strong>(Abrir)</strong>`;
+      btnCustom.onclick = () => {
+        closeSplitOptionsModal();
+        openKeypadModal('split', side, idx, term);
+      };
+      container.appendChild(btnCustom);
+
+      document.getElementById('splitOptionsModal').style.display = 'flex';
+    }
+
+    function closeSplitOptionsModal() {
+      document.getElementById('splitOptionsModal').style.display = 'none';
+      termToSplit = null;
+    }
+
+    function executeSplitCompact(newTermList) {
+      if (!termToSplit) return;
+      const list = termToSplit.side === 'left' ? leftTerms : rightTerms;
+      list.splice(termToSplit.idx, 1, ...newTermList);
+      playSound('fuse');
+      closeSplitOptionsModal();
+      render();
+      checkTutorialProgress();
+    }
+
+    function openParenDeleteModal(side, idx, term) {
+      parenToDelete = { side, idx, term };
+      const desc = document.getElementById('parenDeleteDesc');
+      desc.textContent = `Has tocado el paréntesis '${term.char}'. Si deseas retirarlo para desasociar los términos, presiona Eliminar.`;
+      document.getElementById('parenDeleteModal').style.display = 'flex';
+    }
+
+    function closeParenDeleteModal() {
+      document.getElementById('parenDeleteModal').style.display = 'none';
+      parenToDelete = null;
+    }
+
+    function confirmDeleteParen() {
+      if (!parenToDelete) return;
+      saveHistoryState();
+      const list = parenToDelete.side === 'left' ? leftTerms : rightTerms;
+      list.splice(parenToDelete.idx, 1);
+      playSound('fuse');
+      closeParenDeleteModal();
+      render();
+      checkTutorialProgress();
+    }
+
+    function insertParenChar(side, char) {
+      const list = side === 'left' ? leftTerms : rightTerms;
+      if (char === '(') {
+        list.unshift({ type: 'paren_char', char: '(' });
+      } else {
+        list.push({ type: 'paren_char', char: ')' });
+      }
+      playSound('fuse');
+      render();
+      checkTutorialProgress();
+    }
+
+    function handleZoneDropMobile(data, targetSide) {
+      if (data.originSide === 'toolbox') {
+        saveHistoryState();
+        insertParenChar(targetSide, data.term.char);
+        return;
+      }
+
+      if (data.originSide === targetSide) return;
+      saveHistoryState();
+
+      const originList = data.originSide === 'left' ? leftTerms : rightTerms;
+      const targetList = targetSide === 'left' ? leftTerms : rightTerms;
+
+      originList.splice(data.index, 1);
+      let t = JSON.parse(JSON.stringify(data.term));
+      if (['var', 'num'].includes(t.type)) t.val = -t.val;
+      else if (t.type === 'compact') t.mult = -t.mult;
+      else if (t.type === 'op') t.op = t.op === '/' ? '*' : '/';
+
+      targetList.push(t);
+      playSound('tilt');
+      render();
+    }
+
+    // APLICACIÓN DE PROPIEDAD DISTRIBUTIVA AL ARRASTRAR UN OPERADOR A UN GRUPO CON PARÉNTESIS
+    function tryApplyDistributiveOpToParenGroup(dragged, targetSide, targetIdx) {
+      const originList = dragged.originSide === 'left' ? leftTerms : rightTerms;
+      const targetList = targetSide === 'left' ? leftTerms : rightTerms;
+      const opTerm = dragged.term;
+
+      // Buscar si el objetivo está delimitado por paréntesis
+      let pOpen = -1;
+      let pClose = -1;
+
+      // Escanear hacia la izquierda para hallar '('
+      for (let i = targetIdx; i >= 0; i--) {
+        if (targetList[i].type === 'paren_char' && targetList[i].char === '(') {
+          pOpen = i;
+          break;
+        }
+        if (targetList[i].type === 'paren_char' && targetList[i].char === ')' && i !== targetIdx) {
+          break; // paréntesis cerrado de otro bloque
+        }
+      }
+
+      // Escanear hacia la derecha para hallar ')'
+      if (pOpen !== -1) {
+        for (let i = targetIdx; i < targetList.length; i++) {
+          if (targetList[i].type === 'paren_char' && targetList[i].char === ')') {
+            pClose = i;
+            break;
+          }
+        }
+      }
+
+      // Si se identificó el bloque ( ... )
+      if (pOpen !== -1 && pClose !== -1 && pClose > pOpen) {
+        saveHistoryState();
+        // Quitar el operador del origen
+        originList.splice(dragged.index, 1);
+
+        // Si el operador estaba antes del grupo en la misma lista, ajustar índices
+        if (dragged.originSide === targetSide && dragged.index < pOpen) {
+          pOpen--;
+          pClose--;
+        }
+
+        // Aplicar la operación a cada término interior
+        for (let j = pOpen + 1; j < pClose; j++) {
+          let item = targetList[j];
+          if (item.type === 'num' || item.type === 'var') {
+            if (opTerm.op === '/') item.val /= opTerm.val;
+            if (opTerm.op === '*') item.val *= opTerm.val;
+          } else if (item.type === 'compact') {
+            if (opTerm.op === '/') item.mult /= opTerm.val;
+            if (opTerm.op === '*') item.mult *= opTerm.val;
+          }
+        }
+
+        // Retirar los paréntesis '(' y ')' ya distribuidos
+        targetList.splice(pClose, 1);
+        targetList.splice(pOpen, 1);
+
+        playSound('fuse');
+        render();
+        checkTutorialProgress();
+        return true;
+      }
+      return false;
+    }
+
+    function handleChipFuse(dragged, targetSide, targetIdx) {
+      if (dragged.originSide === 'toolbox') {
+        saveHistoryState();
+        insertParenChar(targetSide, dragged.term.char);
+        return;
+      }
+
+      const originList = dragged.originSide === 'left' ? leftTerms : rightTerms;
+      const targetList = targetSide === 'left' ? leftTerms : rightTerms;
+      const targetTerm = targetList[targetIdx];
+      const sourceTerm = dragged.term;
+
+      // Si se arrastra un operador (/2, *2) hacia un paréntesis o término dentro de un paréntesis:
+      if (sourceTerm.type === 'op') {
+        if (targetTerm.type === 'paren_char' || targetList.some(t => t.type === 'paren_char')) {
+          if (tryApplyDistributiveOpToParenGroup(dragged, targetSide, targetIdx)) {
+            return;
+          }
+        }
+      }
+
+      if (targetTerm.type === 'paren_char' || sourceTerm.type === 'paren_char') {
+        return;
+      }
+
+      // Interacción con Operadores sobre términos individuales
+      if (sourceTerm.type === 'op' || targetTerm.type === 'op') {
+        saveHistoryState();
+        const opTerm = sourceTerm.type === 'op' ? sourceTerm : targetTerm;
+        const baseTerm = sourceTerm.type === 'op' ? targetTerm : sourceTerm;
+
+        if (baseTerm.type === 'compact') {
+          if (opTerm.op === '/') {
+            let newMult = baseTerm.mult / opTerm.val;
+            if (Math.abs(newMult - 1) < 0.0001) {
+              playSound('fuse');
+              if (sourceTerm.type === 'op') originList.splice(dragged.index, 1);
+              else targetList.splice(targetIdx, 1);
+
+              let listToUpdate = targetSide === 'left' ? leftTerms : rightTerms;
+              let actualBaseIdx = listToUpdate.indexOf(baseTerm);
+
+              listToUpdate.splice(actualBaseIdx, 1, 
+                { type: 'var', v: baseTerm.innerVar || 'x', val: baseTerm.innerVal },
+                { type: 'num', val: baseTerm.innerNum }
+              );
+              render();
+              checkTutorialProgress();
+              return;
+            } else {
+              baseTerm.mult = newMult;
+            }
+          } else if (opTerm.op === '*') {
+            baseTerm.mult *= opTerm.val;
+          }
+          playSound('fuse');
+          if (sourceTerm.type === 'op') originList.splice(dragged.index, 1);
+          else targetList.splice(targetIdx, 1);
+          render();
+          checkTutorialProgress();
+          return;
+        }
+
+        if (baseTerm.type === 'var' || baseTerm.type === 'num') {
+          if (opTerm.op === '/') baseTerm.val /= opTerm.val;
+          if (opTerm.op === '*') baseTerm.val *= opTerm.val;
+          playSound('fuse');
+          if (sourceTerm.type === 'op') originList.splice(dragged.index, 1);
+          else targetList.splice(targetIdx, 1);
+          render();
+          checkTutorialProgress();
+          return;
+        }
+      }
+
+      // Validar variables distintas (x con y)
+      if (sourceTerm.type === 'var' && targetTerm.type === 'var' && sourceTerm.v !== targetTerm.v) {
+        showToast(`No puedes sumar incógnitas distintas (${sourceTerm.v} con ${targetTerm.v})`);
+        return;
+      }
+
+      if (sourceTerm.type !== targetTerm.type) {
+        showToast("¡Jerarquía!: No puedes sumar constantes con incógnitas o bloques compactos");
+        return;
+      }
+
+      saveHistoryState();
+      playSound('fuse');
+      if (dragged.originSide === targetSide) {
+        if (dragged.index === targetIdx) return;
+        targetTerm.val += sourceTerm.val;
+        originList.splice(dragged.index, 1);
+      } else {
+        targetTerm.val += (-sourceTerm.val);
+        originList.splice(dragged.index, 1);
+      }
+
+      if (Math.abs(targetTerm.val) < 0.0001) {
+        let actualIdx = targetList.indexOf(targetTerm);
+        if (actualIdx !== -1) targetList.splice(actualIdx, 1);
+      }
+      render();
+      checkTutorialProgress();
+    }
+
+    function handleZoneDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('hovered');
+    }
+
+    function handleZoneDragLeave(e) {
+      e.currentTarget.classList.remove('hovered');
+    }
+
+    function handleZoneDrop(e, targetSide) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('hovered');
+      const dataStr = e.dataTransfer.getData('application/json');
+      if (!dataStr) return;
+
+      const data = JSON.parse(dataStr);
+      if (data.originSide === 'toolbox') {
+        saveHistoryState();
+        insertParenChar(targetSide, data.term.char);
+        return;
+      }
+
+      if (data.originSide === targetSide) return;
+
+      saveHistoryState();
+      const originList = data.originSide === 'left' ? leftTerms : rightTerms;
+      const targetList = targetSide === 'left' ? leftTerms : rightTerms;
+
+      originList.splice(data.index, 1);
+      let t = JSON.parse(JSON.stringify(data.term));
+      if (['var', 'num'].includes(t.type)) t.val = -t.val;
+      else if (t.type === 'compact') t.mult = -t.mult;
+      else if (t.type === 'op') t.op = t.op === '/' ? '*' : '/';
+
+      targetList.push(t);
+      playSound('tilt');
+      render();
+    }
+
+    function openKeypadModal(mode, side = 'left', idx = null, term = null) {
+      modalMode = mode;
+      const modal = document.getElementById('calcModal');
+      const title = document.getElementById('calcModalTitle');
+      const desc = document.getElementById('calcModalDesc');
+      const input = document.getElementById('calcInput');
+      const confirmBtn = document.getElementById('btnConfirmModal');
+
+      if (mode === 'inject') {
+        title.textContent = "Agregar a la Balanza";
+        desc.textContent = "Escribe la operación o término a inyectar:";
+        input.value = "";
+        confirmBtn.textContent = "Añadir";
+
+        if (currentScreen === 'tutorial' && tutorialStep === 4) {
+          input.value = "/4";
+        }
+      } else {
+        termToSplit = { side, idx, term };
+        title.textContent = "¿Descomponer Término?";
+        desc.textContent = "Ingresa la suma o resta equivalente:";
+        confirmBtn.textContent = "Separar";
+
+        if (term.type === 'var') {
+          let v = term.v || 'x';
+          let abs = Math.abs(term.val);
+          let c = abs === 1 ? '' : abs;
+          input.value = term.val > 1 ? `${term.val - 1}${v} + ${v}` : `2${v} - ${v}`;
+        } else if (term.type === 'num') {
+          input.value = `${term.val / 2} + ${term.val / 2}`;
+        }
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeKeypadModal() {
+      document.getElementById('calcModal').style.display = 'none';
+      termToSplit = null;
+    }
+
+    function pressModalKey(key) {
+      const input = document.getElementById('calcInput');
+      input.value += key;
+    }
+
+    function pressModalBackspace() {
+      const input = document.getElementById('calcInput');
+      input.value = input.value.slice(0, -1);
+    }
+
+    function pressModalClear() {
+      document.getElementById('calcInput').value = "";
+    }
+
+    function parseExpressionToTerms(exprStr) {
+      let str = exprStr.trim().replace(/\s+/g, '');
+      if (!str) return [];
+
+      if (/^[*/][0-9]+(\.[0-9]+)?$/.test(str)) {
+        return [{ type: 'op', op: str[0], val: parseFloat(str.slice(1)) }];
+      }
+
+      // Compacto con x o y ej: 2(x+3) o 3(y-4)
+      let compactMatch = str.match(/^([+-]?[0-9]*)\(([+-]?[0-9]*[xy]?)([+-][0-9]+)\)$/);
+      if (compactMatch) {
+        let mStr = compactMatch[1];
+        let mult = 1;
+        if (mStr === '-' || mStr === '-1') mult = -1;
+        else if (mStr && mStr !== '+') mult = parseFloat(mStr);
+
+        let varPart = compactMatch[2];
+        let detectedVar = varPart.includes('y') ? 'y' : 'x';
+        let inVal = 1;
+        if (varPart.includes(detectedVar)) {
+          let c = varPart.replace(detectedVar, '');
+          inVal = (c === '' || c === '+') ? 1 : (c === '-' ? -1 : parseFloat(c));
+        }
+
+        let inNum = parseFloat(compactMatch[3]);
+        return [{ type: 'compact', mult: mult, innerVar: detectedVar, innerVal: inVal, innerNum: inNum }];
+      }
+
+      let matches = str.match(/[+-]?[^+-]+/g);
+      if (!matches) return [];
+      let terms = [];
+
+      matches.forEach(m => {
+        if (m.includes('x') || m.includes('y')) {
+          let detectedVar = m.includes('y') ? 'y' : 'x';
+          let clean = m.replace(detectedVar, '');
+          let coeff = 1;
+          if (clean === '-' || clean === '-1') coeff = -1;
+          else if (clean === '+' || clean === '' || clean === '+1') coeff = 1;
+          else coeff = parseFloat(clean);
+          terms.push({ type: 'var', v: detectedVar, val: coeff });
+        } else {
+          let num = parseFloat(m);
+          if (!isNaN(num)) terms.push({ type: 'num', val: num });
+        }
+      });
+      return terms;
+    }
+
+    function confirmModalAction() {
+      const inputVal = document.getElementById('calcInput').value.trim();
+      if (!inputVal) return;
+
+      if (modalMode === 'inject') {
+        saveHistoryState();
+        const sideChoice = document.getElementById('injectSide').value;
+        const newTerms = parseExpressionToTerms(inputVal);
+        const hasGlobalOp = newTerms.some(t => t.type === 'op' && (t.op === '/' || t.op === '*'));
+
+        if (sideChoice === 'both') {
+          if (hasGlobalOp) {
+            autoEncloseSideInParens(leftTerms);
+            autoEncloseSideInParens(rightTerms);
+          }
+          newTerms.forEach(t => {
+            leftTerms.push(JSON.parse(JSON.stringify(t)));
+            rightTerms.push(JSON.parse(JSON.stringify(t)));
+          });
+        } else if (sideChoice === 'left') {
+          if (hasGlobalOp) autoEncloseSideInParens(leftTerms);
+          newTerms.forEach(t => leftTerms.push(t));
+        } else {
+          if (hasGlobalOp) autoEncloseSideInParens(rightTerms);
+          newTerms.forEach(t => rightTerms.push(t));
+        }
+
+        playSound('tilt');
+        closeKeypadModal();
+        render();
+        checkTutorialProgress();
+      } else if (modalMode === 'split' && termToSplit) {
+        saveHistoryState();
+        const list = termToSplit.side === 'left' ? leftTerms : rightTerms;
+        list.splice(termToSplit.idx, 1);
+        const newTerms = parseExpressionToTerms(inputVal);
+        newTerms.forEach(t => list.push(t));
+        playSound('fuse');
+        closeKeypadModal();
+        render();
+        checkTutorialProgress();
+      }
+    }
+
+    function generateProblemByDifficulty() {
+      currentVariable = Math.random() > 0.5 ? 'y' : 'x';
+      secretVarVal = Math.floor(Math.random() * 5) + 3;
+      leftTerms = [];
+      rightTerms = [];
+      historyStack = [];
+      updateUndoButton();
+
+      if (currentDifficulty === 1) {
+        const b = Math.floor(Math.random() * 8) + 2;
+        leftTerms = [{ type: 'var', v: currentVariable, val: 1 }, { type: 'num', val: b }];
+        rightTerms = [{ type: 'num', val: secretVarVal + b }];
+      } else if (currentDifficulty === 2) {
+        const a = Math.floor(Math.random() * 3) + 2;
+        leftTerms = [{ type: 'var', v: currentVariable, val: a }];
+        rightTerms = [{ type: 'num', val: a * secretVarVal }];
+      } else if (currentDifficulty === 3) {
+        const m = Math.floor(Math.random() * 2) + 2;
+        const inNum = Math.floor(Math.random() * 5) + 1;
+        const total = m * (secretVarVal + inNum);
+        leftTerms = [{ type: 'compact', mult: m, innerVar: currentVariable, innerVal: 1, innerNum: inNum }];
+        rightTerms = [{ type: 'num', val: total }];
+      } else if (currentDifficulty === 4) {
+        const m = 2;
+        const inNum = Math.floor(Math.random() * 4) + 1;
+        const extra = Math.floor(Math.random() * 6) + 2;
+        const total = m * (secretVarVal + inNum) + extra;
+        leftTerms = [
+          { type: 'compact', mult: m, innerVar: currentVariable, innerVal: 1, innerNum: inNum },
+          { type: 'num', val: extra }
+        ];
+        rightTerms = [{ type: 'num', val: total }];
+      } else {
+        const m = 2;
+        const inNum = 3;
+        const totalLeft = m * (secretVarVal + inNum);
+        leftTerms = [{ type: 'compact', mult: m, innerVar: currentVariable, innerVal: 1, innerNum: inNum }];
+        rightTerms = [
+          { type: 'var', v: currentVariable, val: 1 },
+          { type: 'num', val: totalLeft - secretVarVal }
+        ];
+      }
+
+      initialSnapshot = {
+        l: JSON.parse(JSON.stringify(leftTerms)),
+        r: JSON.parse(JSON.stringify(rightTerms))
+      };
+      hasPlayedVictory = false;
+      render();
+    }
+
+    function resetTutorialStep() {
+      currentVariable = 'x';
+      secretVarVal = 8;
+      tutorialStep = 1;
+      historyStack = [];
+      updateUndoButton();
+      leftTerms = [{ type: 'var', v: 'x', val: 3 }, { type: 'var', v: 'x', val: 1 }];
+      rightTerms = [{ type: 'num', val: 32 }];
+      document.getElementById('injectSide').value = 'both';
+      hasPlayedVictory = false;
+      render();
+    }
+
+    function updateTutorialGuide() {
+      document.querySelectorAll('.tut-guide-highlight').forEach(el => el.classList.remove('tut-guide-highlight'));
+
+      if (tutorialStep === 1) {
+        tutStepTag.textContent = "Paso 1 de 5: Asociación de Términos";
+        tutInstructions.innerHTML = "Arrastra la ficha <strong>+x</strong> sobre <strong>+3x</strong> para sumarlos ($3x + x = 4x$).";
+        tutHint.textContent = "👉 Encima +x sobre +3x en el plato izquierdo";
+        const c1 = document.getElementById('chip_left_1');
+        if (c1) c1.classList.add('tut-guide-highlight');
+      } 
+      else if (tutorialStep === 2) {
+        tutStepTag.textContent = "Paso 2 de 5: Separación / Descomposición";
+        tutInstructions.innerHTML = "<strong>Toca la ficha +32</strong> en el plato derecho para abrir sus opciones y separarla en <strong>16 + 16</strong>.";
+        tutHint.textContent = "👉 Haz clic sobre el número +32 para descomponerlo";
+        const cRight = document.getElementById('chip_right_0');
+        if (cRight) cRight.classList.add('tut-guide-highlight');
+      } 
+      else if (tutorialStep === 3) {
+        tutStepTag.textContent = "Paso 3 de 5: Agrupación con Paréntesis";
+        tutInstructions.innerHTML = "Arrastra <strong>'(' al inicio</strong> y <strong>')' al final</strong> del Plato Derecho para agrupar $(16 + 16)$.";
+        tutHint.textContent = "👉 Arrastra los paréntesis desde la barra dorada hacia el plato derecho";
+        const tOpen = document.getElementById('toolParenOpen');
+        const tClose = document.getElementById('toolParenClose');
+        if (tOpen) tOpen.classList.add('tut-guide-highlight');
+        if (tClose) tClose.classList.add('tut-guide-highlight');
+      } 
+      else if (tutorialStep === 4) {
+        tutStepTag.textContent = "Paso 4 de 5: Ley Uniforme (Ambos Platos)";
+        tutInstructions.innerHTML = "Añade <strong>/4 en ambos platos</strong> usando el teclado.";
+        tutHint.textContent = "👉 Presiona '+ Abrir Teclado' y añade /4 con la opción 'Ambos Platos'";
+        const btnOpen = document.getElementById('btnOpenInjector');
+        if (btnOpen) btnOpen.classList.add('tut-guide-highlight');
+      } 
+      else if (tutorialStep === 5) {
+        tutStepTag.textContent = "Paso 5 de 5: Simplificación y Solución";
+        tutInstructions.innerHTML = "Arrastra <strong>/4 sobre 4x</strong> y <strong>/4 sobre el plato derecho</strong> para simplificar y despejar x.";
+        tutHint.textContent = "👉 Cancela las operaciones arrastrando las fichas de división";
+      } 
+      else if (tutorialStep === 6) {
+        tutStepTag.textContent = "¡Completado!";
+        tutInstructions.innerHTML = "🎉 <strong>¡Balanza despejada y equilibrada!</strong> Ya dominas las propiedades fundamentales.";
+        tutHint.textContent = "✅ Pasa a '2. Práctica' para nuevos desafíos algebraicos.";
+      }
+    }
+
+    function checkTutorialProgress() {
+      if (currentScreen !== 'tutorial') return;
+
+      if (tutorialStep === 1) {
+        if (leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 4) {
+          tutorialStep = 2;
+          playSound('victory');
+          updateTutorialGuide();
+        }
+      } else if (tutorialStep === 2) {
+        if (rightTerms.length >= 2 && rightTerms.every(t => t.type === 'num')) {
+          tutorialStep = 3;
+          playSound('victory');
+          updateTutorialGuide();
+        }
+      } else if (tutorialStep === 3) {
+        const hasOpen = rightTerms.some(t => t.type === 'paren_char' && t.char === '(');
+        const hasClose = rightTerms.some(t => t.type === 'paren_char' && t.char === ')');
+        if (hasOpen && hasClose && checkParenthesisBalance(rightTerms)) {
+          tutorialStep = 4;
+          playSound('victory');
+          updateTutorialGuide();
+        }
+      } else if (tutorialStep === 4) {
+        const hasLeftDiv4 = leftTerms.some(t => t.type === 'op' && t.op === '/' && t.val === 4);
+        const hasRightDiv4 = rightTerms.some(t => t.type === 'op' && t.op === '/' && t.val === 4);
+        if (hasLeftDiv4 && hasRightDiv4) {
+          tutorialStep = 5;
+          playSound('victory');
+          updateTutorialGuide();
+        }
+      } else if (tutorialStep === 5) {
+        const isVarIsolatedLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 1;
+        const rightVal = evalSideExact(rightTerms);
+        if (isVarIsolatedLeft && Math.abs(rightVal - secretVarVal) < 0.001) {
+          tutorialStep = 6;
+          updateTutorialGuide();
+        }
+      }
+    }
+
+    function resetCurrent() {
+      if (currentScreen === 'tutorial') {
+        resetTutorialStep();
+      } else if (initialSnapshot) {
+        historyStack = [];
+        updateUndoButton();
+        leftTerms = JSON.parse(JSON.stringify(initialSnapshot.l));
+        rightTerms = JSON.parse(JSON.stringify(initialSnapshot.r));
+        hasPlayedVictory = false;
+        render();
+      }
+    }
+
+    resetTutorialStep();
+  </script>
+</body>
+</html>
