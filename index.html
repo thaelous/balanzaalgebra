@@ -6,12 +6,15 @@
   <title>La Báscula: Laboratorio de Álgebra</title>
   <style>
     :root {
-      --bg: #070d1e;
-      --card-bg: rgba(22, 32, 58, 0.85);
-      --accent-l: #38bdf8;
-      --accent-r: #f472b6;
+      --bg: #050816;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --accent-x: #38bdf8;
+      --accent-y: #ec4899;
       --gold: #facc15;
-      --gold-dark: #ca8a04;
+      --gold-glow: rgba(250, 204, 21, 0.4);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.4);
       --text: #f8fafc;
       --muted: #94a3b8;
     }
@@ -31,7 +34,7 @@
       height: 100%;
       overflow: hidden;
       overscroll-behavior: none;
-      background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0b1329 55%, #050814 100%);
+      background: radial-gradient(circle at 50% 5%, #1e1b4b 0%, #0b112c 45%, #030712 100%);
       color: var(--text);
     }
 
@@ -41,6 +44,17 @@
       align-items: center;
       justify-content: space-between;
       padding: 6px 10px;
+      position: relative;
+    }
+
+    /* Canvas de Confeti de Celebración */
+    #celebrationCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99;
     }
 
     .app-container {
@@ -59,75 +73,79 @@
     }
 
     h1 {
-      font-size: 1.3rem;
-      background: linear-gradient(135deg, #38bdf8 0%, #facc15 60%, #f472b6 100%);
+      font-size: 1.35rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #38bdf8 0%, #facc15 50%, #ec4899 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px;
       line-height: 1.2;
+      filter: drop-shadow(0 2px 8px rgba(250, 204, 21, 0.3));
     }
 
     .screen-nav {
       display: flex;
       width: 100%;
-      gap: 3px;
+      gap: 4px;
       background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 3px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
     }
 
     .btn-nav {
       flex: 1;
-      padding: 5px 2px;
-      border-radius: 6px;
+      padding: 6px 2px;
+      border-radius: 8px;
       border: none;
       background: transparent;
       color: var(--muted);
-      font-weight: 700;
-      font-size: 0.74rem;
+      font-weight: 800;
+      font-size: 0.76rem;
       cursor: pointer;
       text-align: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-nav.active {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
       color: var(--gold);
-      box-shadow: 0 0 10px rgba(250, 204, 21, 0.25);
+      box-shadow: 0 0 14px var(--gold-glow), inset 0 0 8px rgba(250, 204, 21, 0.2);
+      border: 1px solid rgba(250, 204, 21, 0.4);
     }
 
     .tutorial-guide-box {
       width: 100%;
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
       border: 1.5px solid var(--gold);
-      border-radius: 10px;
-      padding: 6px 10px;
-      box-shadow: 0 0 14px rgba(250, 204, 21, 0.2);
+      border-radius: 12px;
+      padding: 7px 12px;
+      box-shadow: 0 0 18px var(--gold-glow);
     }
 
     .tut-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .tut-step-tag {
-      background: var(--gold);
+      background: linear-gradient(135deg, #facc15, #ca8a04);
       color: #0f172a;
       font-size: 0.65rem;
       font-weight: 900;
-      padding: 1px 6px;
-      border-radius: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .tut-instructions {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #f8fafc;
-      line-height: 1.3;
-      margin-bottom: 2px;
+      line-height: 1.35;
     }
 
     .tut-instructions strong { color: var(--gold); }
@@ -136,21 +154,21 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      margin-top: 3px;
     }
 
     .tut-hint {
-      font-size: 0.7rem;
-      color: var(--accent-l);
+      font-size: 0.72rem;
+      color: var(--accent-x);
       font-style: italic;
     }
 
     .btn-tut-action {
-      background: #334155;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 4px;
-      padding: 3px 8px;
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 3px 9px;
       font-size: 0.7rem;
       font-weight: 700;
       cursor: pointer;
@@ -158,38 +176,40 @@
 
     .tut-guide-highlight {
       outline: 2px solid var(--gold) !important;
-      box-shadow: 0 0 16px rgba(250, 204, 21, 0.85) !important;
-      animation: pulseHighlight 1s infinite alternate !important;
+      box-shadow: 0 0 20px var(--gold) !important;
+      animation: pulseHighlight 0.9s infinite alternate cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     @keyframes pulseHighlight {
-      from { transform: scale(1); }
-      to { transform: scale(1.06); }
+      from { transform: scale(1); filter: brightness(1); }
+      to { transform: scale(1.08); filter: brightness(1.3); }
     }
 
     .difficulty-bar {
       width: 100%;
       background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 5px 10px;
-      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      padding: 6px 12px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
     }
 
     .diff-label {
       font-size: 0.72rem;
-      font-weight: 800;
+      font-weight: 900;
       color: var(--muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .diff-level-text {
       font-weight: 800;
       color: var(--gold);
-      font-size: 0.75rem;
+      font-size: 0.76rem;
     }
 
     input[type="range"] {
@@ -226,59 +246,84 @@
       font-weight: 900;
       fill: #ffffff;
       text-anchor: middle;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95));
     }
 
     .equation-board {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 1rem;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid var(--card-border);
+      padding: 5px 18px;
+      border-radius: 24px;
+      font-size: 1.05rem;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       white-space: nowrap;
       margin: 0 auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
     }
 
-    .eq-left { color: var(--accent-l); }
-    .eq-sign { color: var(--gold); font-size: 1.15rem; }
-    .eq-right { color: var(--accent-r); }
+    .eq-left { color: var(--accent-x); }
+    .eq-sign { color: var(--gold); font-size: 1.2rem; }
+    .eq-right { color: var(--accent-y); }
 
     .status-badge {
       font-weight: 800;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       text-align: center;
-      padding: 3px 10px;
-      border-radius: 12px;
+      padding: 4px 14px;
+      border-radius: 14px;
       margin: 0 auto;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .balanced { background: rgba(6, 95, 70, 0.85); color: #34d399; border: 1px solid #10b981; }
-    .unbalanced { background: rgba(127, 29, 29, 0.85); color: #fca5a5; border: 1px solid #ef4444; }
-    .victory { background: rgba(133, 77, 14, 0.9); color: #fef08a; border: 1px solid var(--gold); }
+    .balanced { 
+      background: rgba(6, 95, 70, 0.85); 
+      color: #34d399; 
+      border: 1px solid var(--green);
+      box-shadow: 0 0 12px var(--green-glow);
+    }
+    .unbalanced { 
+      background: rgba(127, 29, 29, 0.85); 
+      color: #fca5a5; 
+      border: 1px solid #ef4444; 
+    }
+    .victory { 
+      background: linear-gradient(135deg, rgba(161, 98, 7, 0.95), rgba(113, 63, 18, 0.95)); 
+      color: #fef08a; 
+      border: 1.5px solid var(--gold); 
+      box-shadow: 0 0 24px var(--gold), inset 0 0 12px rgba(250, 204, 21, 0.4);
+      animation: victoryPulse 1.2s infinite alternate ease-in-out;
+    }
+
+    @keyframes victoryPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.06); filter: brightness(1.25); }
+    }
 
     .toast-msg {
-      background: rgba(127, 29, 29, 0.95);
-      color: #fecaca;
+      background: rgba(220, 38, 38, 0.95);
+      color: #fee2e2;
       border: 1px solid #ef4444;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.72rem;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.74rem;
       font-weight: 800;
       display: none;
       text-align: center;
       margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
     }
 
     .paren-toolbox {
       width: 100%;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(250, 204, 21, 0.3);
-      border-radius: 8px;
-      padding: 4px 10px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 10px;
+      padding: 5px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -286,10 +331,11 @@
     }
 
     .paren-toolbox span {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 800;
       color: var(--muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .paren-dock {
@@ -299,57 +345,62 @@
     }
 
     .chip-paren {
-      background: linear-gradient(135deg, #78350f, #b45309) !important;
+      background: linear-gradient(135deg, #854d0e, #ca8a04) !important;
       color: #fef08a !important;
       border: 1.5px solid #facc15 !important;
-      font-size: 1.1rem !important;
-      padding: 2px 10px !important;
+      font-size: 1.15rem !important;
+      padding: 2px 12px !important;
       font-weight: 900 !important;
       cursor: grab !important;
-      border-radius: 6px !important;
+      border-radius: 8px !important;
+      box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3) !important;
     }
 
     .workbench-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 8px;
       width: 100%;
     }
 
     .pan-workbench {
       background: var(--card-bg);
-      border: 1.5px dashed rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
-      padding: 6px;
-      min-height: 80px;
+      backdrop-filter: blur(8px);
+      border: 1.5px dashed rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 7px;
+      min-height: 85px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: all 0.2s ease;
     }
 
     .pan-workbench.workbench-left { border-color: rgba(56, 189, 248, 0.45); }
-    .pan-workbench.workbench-right { border-color: rgba(244, 114, 182, 0.45); }
+    .pan-workbench.workbench-right { border-color: rgba(236, 72, 153, 0.45); }
+    .pan-workbench.hovered { background: rgba(30, 41, 59, 0.85); border-style: solid; }
 
     .workbench-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .workbench-title {
-      font-size: 0.68rem;
-      font-weight: 800;
+      font-size: 0.7rem;
+      font-weight: 900;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .workbench-left .workbench-title { color: var(--accent-l); }
-    .workbench-right .workbench-title { color: var(--accent-r); }
+    .workbench-left .workbench-title { color: var(--accent-x); }
+    .workbench-right .workbench-title { color: var(--accent-y); }
 
     .terms-box {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 5px;
       justify-content: center;
       align-items: center;
       width: 100%;
@@ -357,44 +408,59 @@
     }
 
     .term-chip {
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-weight: 800;
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-weight: 900;
       font-size: 0.88rem;
       cursor: grab;
       border: 1.5px solid #38bdf8;
-      background: linear-gradient(135deg, #1e40af, #2563eb);
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
       color: #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+      touch-action: none;
+    }
+
+    .term-chip:active {
+      transform: scale(0.96);
     }
 
     .term-chip.chip-y {
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      border-color: #38bdf8;
+      background: linear-gradient(135deg, #be185d, #db2777);
+      border-color: #f472b6;
+      box-shadow: 0 3px 10px rgba(219, 39, 119, 0.35);
+    }
+
+    .term-chip.chip-num {
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      border-color: #2dd4bf;
     }
 
     .term-chip.chip-fuse-target {
-      border-color: #fff !important;
-      box-shadow: 0 0 16px #facc15 !important;
-      transform: scale(1.12) !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 20px #facc15 !important;
+      transform: scale(1.14) !important;
     }
 
     .chip-compact {
-      background: linear-gradient(135deg, #4c1d95, #6d28d9) !important;
+      background: linear-gradient(135deg, #581c87, #7e22ce) !important;
       border-color: #c084fc !important;
+      box-shadow: 0 3px 10px rgba(126, 34, 206, 0.35) !important;
     }
 
     .chip-op {
-      background: linear-gradient(135deg, #065f46, #059669) !important;
+      background: linear-gradient(135deg, #047857, #059669) !important;
       border-color: #34d399 !important;
+      box-shadow: 0 3px 10px rgba(5, 150, 105, 0.35) !important;
     }
 
     .injector-card {
       width: 100%;
       background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 5px 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -406,11 +472,12 @@
       font-weight: 800;
       color: var(--muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .injector-controls {
       display: flex;
-      gap: 4px;
+      gap: 5px;
       align-items: center;
     }
 
@@ -418,22 +485,26 @@
       background: #0f172a;
       border: 1px solid #334155;
       color: #fff;
-      padding: 4px 6px;
-      border-radius: 6px;
-      font-size: 0.74rem;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 0.75rem;
       outline: none;
+      font-weight: 700;
     }
 
     .btn-open-injector {
       background: linear-gradient(135deg, #0284c7, #0369a1);
       color: #fff;
       border: 1px solid #38bdf8;
-      padding: 5px 10px;
-      border-radius: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
       font-weight: 800;
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+      transition: transform 0.15s ease;
     }
+    .btn-open-injector:active { transform: scale(0.96); }
 
     .controls-bottom {
       display: flex;
@@ -443,12 +514,12 @@
 
     .btn-secondary {
       flex: 1;
-      padding: 6px 4px;
+      padding: 7px 4px;
       background: rgba(30, 41, 59, 0.85);
       color: #e2e8f0;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      font-weight: 700;
+      border-radius: 8px;
+      font-weight: 800;
       font-size: 0.76rem;
       cursor: pointer;
       text-align: center;
@@ -456,7 +527,7 @@
     }
 
     .btn-secondary:disabled {
-      opacity: 0.45;
+      opacity: 0.4;
       cursor: not-allowed;
       border-color: transparent;
     }
@@ -465,78 +536,82 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(6px);
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
       justify-content: center;
       align-items: center;
       z-index: 100;
-      padding: 8px;
+      padding: 10px;
     }
 
     .modal-box {
-      background: linear-gradient(145deg, #16203a, #0b1329);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 2px solid var(--gold);
-      border-radius: 14px;
-      padding: 12px;
+      border-radius: 16px;
+      padding: 14px;
       width: 100%;
-      max-width: 330px;
+      max-width: 340px;
       text-align: center;
+      box-shadow: 0 0 30px rgba(250, 204, 21, 0.25);
     }
 
     .modal-title {
       color: var(--gold);
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 900;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .modal-desc {
       color: var(--muted);
-      font-size: 0.72rem;
-      margin-bottom: 6px;
+      font-size: 0.74rem;
+      margin-bottom: 8px;
     }
 
     .modal-input {
       width: 100%;
-      padding: 8px;
+      padding: 9px;
       background: #090e1c;
-      border: 1px solid #334155;
-      border-radius: 6px;
+      border: 1.5px solid #334155;
+      border-radius: 8px;
       color: #fff;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       text-align: center;
       outline: none;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-family: monospace;
-      font-weight: 700;
+      font-weight: 800;
       pointer-events: none;
     }
 
     .calc-keypad {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
-      margin-bottom: 8px;
+      gap: 5px;
+      margin-bottom: 10px;
     }
 
     .calc-btn {
       background: #1e293b;
       color: #f8fafc;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 8px 2px;
-      border-radius: 6px;
-      font-size: 0.92rem;
+      padding: 9px 2px;
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-weight: 800;
       cursor: pointer;
+      transition: transform 0.1s;
     }
-    .calc-btn.var { background: #3b224c; color: #e879f9; }
-    .calc-btn.op { background: #0f2744; color: #38bdf8; }
-    .calc-btn.paren { background: #4a2800; color: #f59e0b; }
-    .calc-btn.clear { background: #450a0a; color: #f87171; }
+    .calc-btn:active { transform: scale(0.92); }
+    .calc-btn.var-x { background: #075985; color: #38bdf8; }
+    .calc-btn.var-y { background: #831843; color: #f472b6; }
+    .calc-btn.op { background: #064e3b; color: #34d399; }
+    .calc-btn.paren { background: #713f12; color: #facc15; }
+    .calc-btn.clear { background: #7f1d1d; color: #fca5a5; }
 
     .modal-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
     }
 
     .btn-modal-confirm {
@@ -544,11 +619,12 @@
       background: linear-gradient(135deg, #facc15, #ca8a04);
       color: #0f172a;
       border: none;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 9px;
+      border-radius: 8px;
       font-weight: 900;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       cursor: pointer;
+      box-shadow: 0 2px 10px rgba(250, 204, 21, 0.3);
     }
 
     .btn-modal-cancel {
@@ -556,10 +632,10 @@
       background: #334155;
       color: #fff;
       border: none;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 9px;
+      border-radius: 8px;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       cursor: pointer;
     }
 
@@ -571,16 +647,17 @@
       background: #1e293b;
       border: 1px solid #38bdf8;
       color: #fff;
-      padding: 8px 10px;
-      border-radius: 8px;
+      padding: 9px 12px;
+      border-radius: 10px;
       font-weight: 800;
       font-size: 0.82rem;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       cursor: pointer;
       text-align: left;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: background 0.2s;
     }
     .split-choice-btn:hover { background: #0284c7; }
 
@@ -590,15 +667,18 @@
         justify-content: center;
         overflow-y: auto;
       }
-      .app-container { max-width: 850px; gap: 10px; justify-content: flex-start; }
-      h1 { font-size: 1.9rem; margin-bottom: 4px; }
+      .app-container { max-width: 850px; gap: 12px; justify-content: flex-start; }
+      h1 { font-size: 2rem; margin-bottom: 4px; }
       .scale-wrapper { height: 210px; }
-      .equation-board { font-size: 1.35rem; padding: 6px 22px; }
+      .equation-board { font-size: 1.4rem; padding: 7px 26px; }
       .pan-workbench { min-height: 110px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Canvas acelerado para la explosión de victoria -->
+  <canvas id="celebrationCanvas"></canvas>
 
   <div class="app-container">
     <header>
@@ -640,7 +720,7 @@
             <stop offset="100%" stop-color="#713f12"/>
           </linearGradient>
           <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.5"/>
+            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity="0.6"/>
           </filter>
         </defs>
 
@@ -670,7 +750,7 @@
       </svg>
     </div>
 
-    <div class="equation-board">
+    <div class="equation-board" id="eqBoardEl">
       <span class="eq-left" id="eqLeftText">0</span>
       <span class="eq-sign" id="eqSymbol">=</span>
       <span class="eq-right" id="eqRightText">0</span>
@@ -724,7 +804,6 @@
     </div>
   </div>
 
-  <!-- Modal Teclado Numérico con X e Y -->
   <div class="modal-backdrop" id="calcModal">
     <div class="modal-box">
       <div class="modal-title" id="calcModalTitle">Agregar a la Balanza</div>
@@ -732,8 +811,8 @@
       <input type="text" class="modal-input" id="calcInput" readonly inputmode="none" placeholder="0" />
       
       <div class="calc-keypad">
-        <button class="calc-btn var" onclick="pressModalKey('x')">x</button>
-        <button class="calc-btn var" onclick="pressModalKey('y')">y</button>
+        <button class="calc-btn var-x" onclick="pressModalKey('x')">x</button>
+        <button class="calc-btn var-y" onclick="pressModalKey('y')">y</button>
         <button class="calc-btn paren" onclick="pressModalKey('(')">(</button>
         <button class="calc-btn paren" onclick="pressModalKey(')')">)</button>
         <button class="calc-btn clear" onclick="pressModalClear()">AC</button>
@@ -792,6 +871,9 @@
   </div>
 
   <script>
+    // ==========================================
+    // SISTEMA DE EFECTOS SONOROS (WEB AUDIO API)
+    // ==========================================
     let audioCtx = null;
     function getAudioContext() {
       if (!audioCtx) {
@@ -804,55 +886,175 @@
       try {
         const ctx = getAudioContext();
         if (ctx.state === 'suspended') ctx.resume();
-
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
         const now = ctx.currentTime;
 
-        if (type === 'fuse') {
+        if (type === 'pop') {
+          // Sonido suave de toque interactivo
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-          osc.start(now);
-          osc.stop(now + 0.16);
-        } else if (type === 'tilt') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(180, now);
-          osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
           gain.gain.setValueAtTime(0.12, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.23);
-        } else if (type === 'error') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(220, now);
-          gain.gain.setValueAtTime(0.18, now);
+          osc.stop(now + 0.07);
+        }
+        else if (type === 'fuse') {
+          // Fusión con doble armónico brillante
+          [520, 1040].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = idx === 0 ? 'triangle' : 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 0.14);
+            gain.gain.setValueAtTime(0.18 / (idx + 1), now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.16);
+          });
+        }
+        else if (type === 'chime') {
+          // Acierto o hito completado
+          [659.25, 880, 1318.51].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.08);
+            gain.gain.setValueAtTime(0.15, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.005, now + i * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 0.26);
+          });
+        }
+        else if (type === 'tilt') {
+          // Balanceo de peso
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(190, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+          gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.21);
-        } else if (type === 'victory') {
-          [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = 'sine';
-            o.connect(g);
-            g.connect(ctx.destination);
-            o.frequency.setValueAtTime(freq, now + i * 0.09);
-            gain.gain.setValueAtTime(0.2, now + i * 0.09);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.09 + 0.3);
-            o.start(now + i * 0.09);
-            o.stop(now + i * 0.09 + 0.31);
+          osc.stop(now + 0.22);
+        }
+        else if (type === 'error') {
+          // Error armónico
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.setValueAtTime(180, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        }
+        else if (type === 'victory') {
+          // Fanfarria polifónica con arpegio mayor y brillo
+          const chord = [523.25, 659.25, 783.99, 1046.5, 1318.51];
+          chord.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = i === chord.length - 1 ? 'triangle' : 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.08);
+            gain.gain.setValueAtTime(0.22, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.5);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 0.52);
           });
         }
       } catch(e) {}
     }
 
+    // ==========================================
+    // SISTEMA DE CONFETI Y ESTRELLAS (CANVAS)
+    // ==========================================
+    const canvas = document.getElementById('celebrationCanvas');
+    const ctxCanvas = canvas.getContext('2d');
+    let particles = [];
+    let celebrationAnimId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerCelebration() {
+      playSound('victory');
+      particles = [];
+      const colors = ['#facc15', '#38bdf8', '#ec4899', '#34d399', '#a855f7', '#ffffff'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width * 0.5 + (Math.random() - 0.5) * 60,
+          y: canvas.height * 0.45 + (Math.random() - 0.5) * 40,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 1.2) * 13,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+          gravity: 0.32,
+          opacity: 1,
+          decay: Math.random() * 0.012 + 0.008
+        });
+      }
+
+      if (celebrationAnimId) cancelAnimationFrame(celebrationAnimId);
+      renderCelebration();
+    }
+
+    function renderCelebration() {
+      ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.rotation += p.vRot;
+        p.opacity -= p.decay;
+
+        if (p.opacity > 0) {
+          alive = true;
+          ctxCanvas.save();
+          ctxCanvas.globalAlpha = Math.max(0, p.opacity);
+          ctxCanvas.translate(p.x, p.y);
+          ctxCanvas.rotate((p.rotation * Math.PI) / 180);
+          ctxCanvas.fillStyle = p.color;
+          ctxCanvas.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctxCanvas.restore();
+        }
+      });
+
+      if (alive) {
+        celebrationAnimId = requestAnimationFrame(renderCelebration);
+      } else {
+        ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // ==========================================
+    // ESTADO GLOBAL Y VARIABLES
+    // ==========================================
     let currentScreen = 'tutorial';
-    let currentVariable = 'x'; // 'x' o 'y'
+    let currentVariable = 'x';
     let leftTerms = [];
     let rightTerms = [];
     let initialSnapshot = null;
@@ -924,6 +1126,7 @@
     const eqLeftText = document.getElementById('eqLeftText');
     const eqRightText = document.getElementById('eqRightText');
     const eqSymbol = document.getElementById('eqSymbol');
+    const eqBoardEl = document.getElementById('eqBoardEl');
     const statusBadge = document.getElementById('statusBadge');
     const toastMsg = document.getElementById('toastMsg');
     const termsLeftEl = document.getElementById('termsLeft');
@@ -946,6 +1149,7 @@
 
         el.ondragstart = (e) => {
           isDragging = true;
+          playSound('pop');
           e.stopPropagation();
           e.dataTransfer.setData('application/json', JSON.stringify({
             originSide: 'toolbox',
@@ -958,6 +1162,7 @@
 
         el.ontouchstart = (e) => {
           e.preventDefault();
+          playSound('pop');
           const touch = e.touches[0];
           touchDragData = { originSide: 'toolbox', index: -1, term: { type: 'paren_char', char: el.dataset.val }, startX: touch.clientX, startY: touch.clientY, hasMoved: false };
           
@@ -1009,6 +1214,7 @@
       currentScreen = screen;
       historyStack = [];
       updateUndoButton();
+      playSound('pop');
 
       document.querySelectorAll('.btn-nav').forEach((b, i) => {
         b.classList.toggle('active', 
@@ -1038,6 +1244,7 @@
     function changeDifficulty() {
       currentDifficulty = parseInt(document.getElementById('diffSlider').value);
       document.getElementById('diffText').textContent = diffNames[currentDifficulty];
+      playSound('pop');
       generateProblemByDifficulty();
     }
 
@@ -1203,8 +1410,9 @@
         eqSymbol.textContent = '=';
         statusBadge.className = 'status-badge victory';
         statusBadge.innerHTML = `🎉 ¡Incógnita resuelta! <strong>${currentVariable} = ${secretVarVal}</strong>`;
+        eqBoardEl.style.boxShadow = '0 0 25px rgba(250, 204, 21, 0.6)';
         if (!hasPlayedVictory) {
-          playSound('victory');
+          triggerCelebration();
           hasPlayedVictory = true;
         }
       } else if (isVarIsolated && !isEquilibrada) {
@@ -1213,16 +1421,19 @@
         statusBadge.className = 'status-badge unbalanced';
         let apparentVal = Math.round((isVarIsolatedLeft ? rightWeight : leftWeight) * 10) / 10;
         statusBadge.innerHTML = `❌ Desequilibrada (${currentVariable} no puede ser ${apparentVal})`;
+        eqBoardEl.style.boxShadow = 'none';
       } else if (isEquilibrada) {
         hasPlayedVictory = false;
         eqSymbol.textContent = '=';
         statusBadge.className = 'status-badge balanced';
         statusBadge.textContent = '⚖️ Balanza en equilibrio';
+        eqBoardEl.style.boxShadow = 'none';
       } else {
         hasPlayedVictory = false;
         eqSymbol.textContent = diff > 0 ? '<' : '>';
         statusBadge.className = 'status-badge unbalanced';
         statusBadge.textContent = `⚠️ Balanza desequilibrada`;
+        eqBoardEl.style.boxShadow = 'none';
       }
 
       renderChips(termsLeftEl, leftTerms, 'left');
@@ -1249,6 +1460,7 @@
           const c = abs === 1 ? '' : (Number.isInteger(abs) ? abs : Math.round(abs*100)/100);
           chip.textContent = `${t.val > 0 ? '+' : '-'}${c}${v}`;
         } else if (t.type === 'num') {
+          chip.classList.add('chip-num');
           let numStr = Number.isInteger(t.val) ? Math.abs(t.val) : Math.round(Math.abs(t.val)*100)/100;
           chip.textContent = t.val >= 0 ? `+${numStr}` : `-${numStr}`;
         } else if (t.type === 'compact') {
@@ -1261,6 +1473,7 @@
 
         chip.ondragstart = (e) => {
           isDragging = true;
+          playSound('pop');
           e.stopPropagation();
           e.dataTransfer.setData('application/json', JSON.stringify({ originSide: side, index: idx, term: t }));
         };
@@ -1278,13 +1491,14 @@
 
         chip.ontouchstart = (e) => {
           e.preventDefault();
+          playSound('pop');
           const touch = e.touches[0];
           touchDragData = { originSide: side, index: idx, term: t, startX: touch.clientX, startY: touch.clientY, hasMoved: false };
           touchGhostEl = chip.cloneNode(true);
           touchGhostEl.style.position = 'fixed';
           touchGhostEl.style.zIndex = '9999';
           touchGhostEl.style.pointerEvents = 'none';
-          touchGhostEl.style.opacity = '0.85';
+          touchGhostEl.style.opacity = '0.9';
           touchGhostEl.style.left = `${touch.clientX - 25}px`;
           touchGhostEl.style.top = `${touch.clientY - 20}px`;
           document.body.appendChild(touchGhostEl);
@@ -1343,6 +1557,7 @@
     }
 
     function handleChipClick(side, idx, term) {
+      playSound('pop');
       if (term.type === 'paren_char') {
         openParenDeleteModal(side, idx, term);
       } else if (term.type === 'compact') {
@@ -1502,28 +1717,24 @@
       render();
     }
 
-    // APLICACIÓN DE PROPIEDAD DISTRIBUTIVA AL ARRASTRAR UN OPERADOR A UN GRUPO CON PARÉNTESIS
     function tryApplyDistributiveOpToParenGroup(dragged, targetSide, targetIdx) {
       const originList = dragged.originSide === 'left' ? leftTerms : rightTerms;
       const targetList = targetSide === 'left' ? leftTerms : rightTerms;
       const opTerm = dragged.term;
 
-      // Buscar si el objetivo está delimitado por paréntesis
       let pOpen = -1;
       let pClose = -1;
 
-      // Escanear hacia la izquierda para hallar '('
       for (let i = targetIdx; i >= 0; i--) {
         if (targetList[i].type === 'paren_char' && targetList[i].char === '(') {
           pOpen = i;
           break;
         }
         if (targetList[i].type === 'paren_char' && targetList[i].char === ')' && i !== targetIdx) {
-          break; // paréntesis cerrado de otro bloque
+          break;
         }
       }
 
-      // Escanear hacia la derecha para hallar ')'
       if (pOpen !== -1) {
         for (let i = targetIdx; i < targetList.length; i++) {
           if (targetList[i].type === 'paren_char' && targetList[i].char === ')') {
@@ -1533,19 +1744,15 @@
         }
       }
 
-      // Si se identificó el bloque ( ... )
       if (pOpen !== -1 && pClose !== -1 && pClose > pOpen) {
         saveHistoryState();
-        // Quitar el operador del origen
         originList.splice(dragged.index, 1);
 
-        // Si el operador estaba antes del grupo en la misma lista, ajustar índices
         if (dragged.originSide === targetSide && dragged.index < pOpen) {
           pOpen--;
           pClose--;
         }
 
-        // Aplicar la operación a cada término interior
         for (let j = pOpen + 1; j < pClose; j++) {
           let item = targetList[j];
           if (item.type === 'num' || item.type === 'var') {
@@ -1557,11 +1764,10 @@
           }
         }
 
-        // Retirar los paréntesis '(' y ')' ya distribuidos
         targetList.splice(pClose, 1);
         targetList.splice(pOpen, 1);
 
-        playSound('fuse');
+        playSound('chime');
         render();
         checkTutorialProgress();
         return true;
@@ -1581,7 +1787,6 @@
       const targetTerm = targetList[targetIdx];
       const sourceTerm = dragged.term;
 
-      // Si se arrastra un operador (/2, *2) hacia un paréntesis o término dentro de un paréntesis:
       if (sourceTerm.type === 'op') {
         if (targetTerm.type === 'paren_char' || targetList.some(t => t.type === 'paren_char')) {
           if (tryApplyDistributiveOpToParenGroup(dragged, targetSide, targetIdx)) {
@@ -1594,7 +1799,6 @@
         return;
       }
 
-      // Interacción con Operadores sobre términos individuales
       if (sourceTerm.type === 'op' || targetTerm.type === 'op') {
         saveHistoryState();
         const opTerm = sourceTerm.type === 'op' ? sourceTerm : targetTerm;
@@ -1604,7 +1808,7 @@
           if (opTerm.op === '/') {
             let newMult = baseTerm.mult / opTerm.val;
             if (Math.abs(newMult - 1) < 0.0001) {
-              playSound('fuse');
+              playSound('chime');
               if (sourceTerm.type === 'op') originList.splice(dragged.index, 1);
               else targetList.splice(targetIdx, 1);
 
@@ -1644,7 +1848,6 @@
         }
       }
 
-      // Validar variables distintas (x con y)
       if (sourceTerm.type === 'var' && targetTerm.type === 'var' && sourceTerm.v !== targetTerm.v) {
         showToast(`No puedes sumar incógnitas distintas (${sourceTerm.v} con ${targetTerm.v})`);
         return;
@@ -1715,6 +1918,7 @@
 
     function openKeypadModal(mode, side = 'left', idx = null, term = null) {
       modalMode = mode;
+      playSound('pop');
       const modal = document.getElementById('calcModal');
       const title = document.getElementById('calcModalTitle');
       const desc = document.getElementById('calcModalDesc');
@@ -1750,21 +1954,25 @@
     }
 
     function closeKeypadModal() {
+      playSound('pop');
       document.getElementById('calcModal').style.display = 'none';
       termToSplit = null;
     }
 
     function pressModalKey(key) {
+      playSound('pop');
       const input = document.getElementById('calcInput');
       input.value += key;
     }
 
     function pressModalBackspace() {
+      playSound('pop');
       const input = document.getElementById('calcInput');
       input.value = input.value.slice(0, -1);
     }
 
     function pressModalClear() {
+      playSound('pop');
       document.getElementById('calcInput').value = "";
     }
 
@@ -1776,7 +1984,6 @@
         return [{ type: 'op', op: str[0], val: parseFloat(str.slice(1)) }];
       }
 
-      // Compacto con x o y ej: 2(x+3) o 3(y-4)
       let compactMatch = str.match(/^([+-]?[0-9]*)\(([+-]?[0-9]*[xy]?)([+-][0-9]+)\)$/);
       if (compactMatch) {
         let mStr = compactMatch[1];
@@ -1976,13 +2183,13 @@
       if (tutorialStep === 1) {
         if (leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 4) {
           tutorialStep = 2;
-          playSound('victory');
+          playSound('chime');
           updateTutorialGuide();
         }
       } else if (tutorialStep === 2) {
         if (rightTerms.length >= 2 && rightTerms.every(t => t.type === 'num')) {
           tutorialStep = 3;
-          playSound('victory');
+          playSound('chime');
           updateTutorialGuide();
         }
       } else if (tutorialStep === 3) {
@@ -1990,7 +2197,7 @@
         const hasClose = rightTerms.some(t => t.type === 'paren_char' && t.char === ')');
         if (hasOpen && hasClose && checkParenthesisBalance(rightTerms)) {
           tutorialStep = 4;
-          playSound('victory');
+          playSound('chime');
           updateTutorialGuide();
         }
       } else if (tutorialStep === 4) {
@@ -1998,7 +2205,7 @@
         const hasRightDiv4 = rightTerms.some(t => t.type === 'op' && t.op === '/' && t.val === 4);
         if (hasLeftDiv4 && hasRightDiv4) {
           tutorialStep = 5;
-          playSound('victory');
+          playSound('chime');
           updateTutorialGuide();
         }
       } else if (tutorialStep === 5) {
