@@ -47,7 +47,6 @@
       position: relative;
     }
 
-    /* Canvas de Confeti de Celebración */
     #celebrationCanvas {
       position: fixed;
       inset: 0;
@@ -677,7 +676,6 @@
 </head>
 <body>
 
-  <!-- Canvas acelerado para la explosión de victoria -->
   <canvas id="celebrationCanvas"></canvas>
 
   <div class="app-container">
@@ -871,9 +869,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // SISTEMA DE EFECTOS SONOROS (WEB AUDIO API)
-    // ==========================================
     let audioCtx = null;
     function getAudioContext() {
       if (!audioCtx) {
@@ -889,7 +884,6 @@
         const now = ctx.currentTime;
 
         if (type === 'pop') {
-          // Sonido suave de toque interactivo
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
@@ -903,7 +897,6 @@
           osc.stop(now + 0.07);
         }
         else if (type === 'fuse') {
-          // Fusión con doble armónico brillante
           [520, 1040].forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -919,7 +912,6 @@
           });
         }
         else if (type === 'chime') {
-          // Acierto o hito completado
           [659.25, 880, 1318.51].forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -934,7 +926,6 @@
           });
         }
         else if (type === 'tilt') {
-          // Balanceo de peso
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'triangle';
@@ -948,7 +939,6 @@
           osc.stop(now + 0.22);
         }
         else if (type === 'error') {
-          // Error armónico
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sawtooth';
@@ -962,7 +952,6 @@
           osc.stop(now + 0.22);
         }
         else if (type === 'victory') {
-          // Fanfarria polifónica con arpegio mayor y brillo
           const chord = [523.25, 659.25, 783.99, 1046.5, 1318.51];
           chord.forEach((freq, i) => {
             const osc = ctx.createOscillator();
@@ -980,9 +969,6 @@
       } catch(e) {}
     }
 
-    // ==========================================
-    // SISTEMA DE CONFETI Y ESTRELLAS (CANVAS)
-    // ==========================================
     const canvas = document.getElementById('celebrationCanvas');
     const ctxCanvas = canvas.getContext('2d');
     let particles = [];
@@ -1050,9 +1036,6 @@
       }
     }
 
-    // ==========================================
-    // ESTADO GLOBAL Y VARIABLES
-    // ==========================================
     let currentScreen = 'tutorial';
     let currentVariable = 'x';
     let leftTerms = [];
@@ -1400,13 +1383,20 @@
       rightPanGroup.style.transformOrigin = `510px 80px`;
       rightPanGroup.style.transform = `rotate(${-angle}deg)`;
 
-      const isVarIsolatedLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 1 &&
-                               rightTerms.every(t => t.type === 'num');
-      const isVarIsolatedRight = rightTerms.length === 1 && rightTerms[0].type === 'var' && rightTerms[0].val === 1 &&
-                                leftTerms.every(t => t.type === 'num');
-      const isVarIsolated = isVarIsolatedLeft || isVarIsolatedRight;
+      // CONDICIÓN RIGUROSA DE VICTORIA:
+      // La incógnita debe estar sola con coef=1 Y en el otro lado debe haber UN SOLO NÚMERO
+      const isVarIsolatedLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && Math.abs(leftTerms[0].val - 1) < 0.0001 &&
+                               rightTerms.length === 1 && rightTerms[0].type === 'num';
+      const isVarIsolatedRight = rightTerms.length === 1 && rightTerms[0].type === 'var' && Math.abs(rightTerms[0].val - 1) < 0.0001 &&
+                                leftTerms.length === 1 && leftTerms[0].type === 'num';
+      const isFullySolved = (isVarIsolatedLeft || isVarIsolatedRight) && isEquilibrada;
 
-      if (isVarIsolated && isEquilibrada) {
+      // Estado intermedio: variable aislada pero quedan constantes sin sumar (ej: x = 4 + 4)
+      const hasPendingNumsLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && rightTerms.length > 1 && rightTerms.every(t => t.type === 'num');
+      const hasPendingNumsRight = rightTerms.length === 1 && rightTerms[0].type === 'var' && leftTerms.length > 1 && leftTerms.every(t => t.type === 'num');
+      const hasPendingConstantSums = hasPendingNumsLeft || hasPendingNumsRight;
+
+      if (isFullySolved) {
         eqSymbol.textContent = '=';
         statusBadge.className = 'status-badge victory';
         statusBadge.innerHTML = `🎉 ¡Incógnita resuelta! <strong>${currentVariable} = ${secretVarVal}</strong>`;
@@ -1415,12 +1405,11 @@
           triggerCelebration();
           hasPlayedVictory = true;
         }
-      } else if (isVarIsolated && !isEquilibrada) {
+      } else if (hasPendingConstantSums && isEquilibrada) {
         hasPlayedVictory = false;
-        eqSymbol.textContent = diff > 0 ? '<' : '>';
-        statusBadge.className = 'status-badge unbalanced';
-        let apparentVal = Math.round((isVarIsolatedLeft ? rightWeight : leftWeight) * 10) / 10;
-        statusBadge.innerHTML = `❌ Desequilibrada (${currentVariable} no puede ser ${apparentVal})`;
+        eqSymbol.textContent = '=';
+        statusBadge.className = 'status-badge balanced';
+        statusBadge.innerHTML = `👉 <strong>Suma las constantes restantes</strong> para terminar`;
         eqBoardEl.style.boxShadow = 'none';
       } else if (isEquilibrada) {
         hasPlayedVictory = false;
@@ -2167,12 +2156,12 @@
       } 
       else if (tutorialStep === 5) {
         tutStepTag.textContent = "Paso 5 de 5: Simplificación y Solución";
-        tutInstructions.innerHTML = "Arrastra <strong>/4 sobre 4x</strong> y <strong>/4 sobre el plato derecho</strong> para simplificar y despejar x.";
-        tutHint.textContent = "👉 Cancela las operaciones arrastrando las fichas de división";
+        tutInstructions.innerHTML = "Distribuye <strong>/4 sobre el plato derecho</strong> y luego <strong>suma los números resultantes (+4 con +4)</strong>.";
+        tutHint.textContent = "👉 Encima una ficha de +4 sobre la otra para obtener el valor final exacto";
       } 
       else if (tutorialStep === 6) {
         tutStepTag.textContent = "¡Completado!";
-        tutInstructions.innerHTML = "🎉 <strong>¡Balanza despejada y equilibrada!</strong> Ya dominas las propiedades fundamentales.";
+        tutInstructions.innerHTML = "🎉 <strong>¡Balanza despejada y reducida por completo!</strong> Has dominado todas las propiedades.";
         tutHint.textContent = "✅ Pasa a '2. Práctica' para nuevos desafíos algebraicos.";
       }
     }
@@ -2209,9 +2198,10 @@
           updateTutorialGuide();
         }
       } else if (tutorialStep === 5) {
+        // En el paso 5 exige que solo quede 1 variable a la izq y EXACTAMENTE 1 número a la derecha
         const isVarIsolatedLeft = leftTerms.length === 1 && leftTerms[0].type === 'var' && leftTerms[0].val === 1;
-        const rightVal = evalSideExact(rightTerms);
-        if (isVarIsolatedLeft && Math.abs(rightVal - secretVarVal) < 0.001) {
+        const isSingleNumRight = rightTerms.length === 1 && rightTerms[0].type === 'num' && Math.abs(rightTerms[0].val - secretVarVal) < 0.001;
+        if (isVarIsolatedLeft && isSingleNumRight) {
           tutorialStep = 6;
           updateTutorialGuide();
         }
